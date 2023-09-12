@@ -10,7 +10,9 @@ from keyboards.constants import \
     COMMANDS_MESSAGE, \
     USER_ADD_TEXT, \
     USER_REMOVE_TEXT, \
-    USER_SEARCH_TEXT
+    USER_SEARCH_TEXT, \
+    OPTIONAL_FIELD, \
+    STOP_FILLING
 
 from keyboards.constants import \
     USER_ADD_DATA, \
@@ -54,4 +56,16 @@ def get_commands_keyboard() -> InlineKeyboardMarkup:
                 )
             ],
         ],
+    )
+
+
+def get_optional_field_keyboard() -> InlineKeyboardMarkup:
+    return ReplyKeyboardMarkup(resize_keyboard=True).add(
+        KeyboardButton(OPTIONAL_FIELD)
+    )
+
+
+def get_stop_filling_keyboard() -> InlineKeyboardMarkup:
+    return ReplyKeyboardMarkup(resize_keyboard=True).add(
+        KeyboardButton(STOP_FILLING)
     )

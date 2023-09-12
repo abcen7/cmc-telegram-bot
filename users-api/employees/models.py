@@ -6,9 +6,8 @@ from base import BaseModelWithConfig
 
 
 class Employee(BaseModelWithConfig):
-    id: Optional[str] = Field(default=None, alias="_id", validate_default=True)
     name: str = Field()
-    patronymic: Optional[str] = Field()
+    patronymic: Optional[str] = Field(default=None)
     surname: str = Field()
     job_title: str = Field()
     project: str = Field()
