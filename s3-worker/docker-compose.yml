@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  api_s3:
+    build: .
+    ports:
+      - "8001:8001"
+    environment:
+      - MINIO_ACCESS_KEY=9a225csauh1LJnfT1lSa
+      - MINIO_SECRET_KEY=VoY6C1plguUVLuQX3IpZZ2vwzTYx9aaL3vLdthxD
+      - MINIO_ENDPOINT_URL=http://172.20.0.3:9000
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    restart: always
+    volumes:
+      - ./:/app
+
+  s3_storage:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ACCESS_KEY=9a225csauh1LJnfT1lSa
+      - MINIO_SECRET_KEY=VoY6C1plguUVLuQX3IpZZ2vwzTYx9aaL3vLdthxD
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - ./s3-data:/data
