@@ -1,8 +1,10 @@
 from aiogram import Bot, Dispatcher, executor
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+
 from config import TELEGRAM_BOT_TOKEN
 
 bot = Bot(TELEGRAM_BOT_TOKEN)
-dp = Dispatcher(bot)
+dp = Dispatcher(bot, storage=MemoryStorage())
 
 if __name__ == "__main__":
     from handlers.default import *
