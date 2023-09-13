@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 WELCOME_MESSAGE = """
 Привет 👋
@@ -29,13 +29,20 @@ class UserAddMessages(Enum):
     USER_ADD_MESSAGE_FILLING_STOPPED = "❌ Заполнение прервано. Все данные сброшены."
 
 
+class SearchType(Enum):
+    NAME = "name"
+    SURNAME = "surname"
+    PROJECT = "project"
+    JOB_TITLE = "job_title"
+
+
 class UserSearchMessages(Enum):
     USER_SEARCH_MESSAGE = """
     🔎 Давайте найдем пользователя...
     Выберете, по какой характеристике его искать ниже
     """
-    USER_SEARCH_NAME = "Имя"
-    USER_SEARCH_SURNAME = "Фамилия"
-    USER_SEARCH_PATRONYMIC = "Отчество"
-    USER_SEARCH_PROJECT = "Проект"
-    USER_SEARCH_JOB_TITLE = "Должность"
+    USER_SEARCH_UNION_SEARCH_HELP = "[🆕] Объединенный поиск - функция, по которой можно ввести все данные, которые Вы " \
+                                    "знаете о сотруднике и бот выдаст Вам список людей, которые подходят под ваши " \
+                                    "критерии"
+    USER_SEARCH_WAITING = "Бот уже ищет сотрудника!"
+    USER_SEARCH_ASK = "[💬] Введите данные: "

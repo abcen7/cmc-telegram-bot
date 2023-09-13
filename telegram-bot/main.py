@@ -9,5 +9,6 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 if __name__ == "__main__":
     from handlers.default import *
     from handlers.fill_employee_handler import *
+    from handlers.search_employee_handler import *
 
     executor.start_polling(dp, skip_updates=True)

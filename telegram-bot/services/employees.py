@@ -1,10 +1,11 @@
 import os
-from typing import List, Dict, NoReturn
+from typing import List, Dict, NoReturn, Union
 
 from aiogram.dispatcher import FSMContext
 from aiohttp import ClientSession, ClientError, FormData
 
 from config import API_URL
+from handlers.constants import SearchType
 from keyboards.constants import OPTIONAL_FIELD
 
 
@@ -12,6 +13,7 @@ class EmployeesService:
     API_EMPLOYEES = API_URL + '/employees'
     API_UPLOAD_FILE = API_URL + '/upload_file'
     AVATAR_PATH = 'avatar_path'
+    API_SEARCH = API_URL + '/search/employees'
 
     @staticmethod
     async def _prepare_employee(data: Dict[str, str]) -> Dict[str, str]:
@@ -57,6 +59,17 @@ class EmployeesService:
         async with ClientSession() as session:
             try:
                 async with session.post(EmployeesService.API_EMPLOYEES, json=prepared_data) as response:
+                    response.raise_for_status()
+            except ClientError as err:
+                print(f"An error occurred: {err}")
+
+    @staticmethod
+    async def search(search_data: str, search_type: SearchType) -> NoReturn:
+        data = {search_type.value: search_data}
+        async with ClientSession() as session:
+            try:
+                async with session.post(EmployeesService.API_SEARCH, json=data) as response:
+                    print(await response.json())
                     response.raise_for_status()
             except ClientError as err:
                 print(f"An error occurred: {err}")

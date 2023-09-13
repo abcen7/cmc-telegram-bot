@@ -6,6 +6,7 @@ from aiogram.types import \
 
 from aiogram.utils.callback_data import CallbackData
 
+from handlers.constants import UserSearchMessages
 from keyboards.constants import \
     COMMANDS_MESSAGE, \
     USER_ADD_TEXT, \
@@ -68,4 +69,14 @@ def get_optional_field_keyboard() -> InlineKeyboardMarkup:
 def get_stop_filling_keyboard() -> InlineKeyboardMarkup:
     return ReplyKeyboardMarkup(resize_keyboard=True).add(
         KeyboardButton(STOP_FILLING)
+    )
+
+
+def get_search_keyboard() -> InlineKeyboardMarkup:
+    return ReplyKeyboardMarkup(resize_keyboard=True).add(
+        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_NAME.value),
+        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_SURNAME.value),
+        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_PROJECT.value),
+        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_JOB_TITLE.value),
+        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_UNION_SEARCH.value),
     )
