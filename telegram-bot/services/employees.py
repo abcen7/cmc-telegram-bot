@@ -1,7 +1,8 @@
+import os
 from typing import List, Dict, NoReturn
 
 from aiogram.dispatcher import FSMContext
-from aiohttp import ClientSession, ClientError
+from aiohttp import ClientSession, ClientError, FormData
 
 from config import API_URL
 from keyboards.constants import OPTIONAL_FIELD
@@ -9,19 +10,49 @@ from keyboards.constants import OPTIONAL_FIELD
 
 class EmployeesService:
     API_EMPLOYEES = API_URL + '/employees'
+    API_UPLOAD_FILE = API_URL + '/upload_file'
+    AVATAR_PATH = 'avatar_path'
 
     @staticmethod
-    def _prepare_data(data: Dict[str, str]) -> Dict[str, str]:
-        prepared_data = {}
+    async def _prepare_employee(data: Dict[str, str]) -> Dict[str, str]:
+        result = {}
         for key in data:
             if data[key] != OPTIONAL_FIELD:
-                prepared_data[key] = data[key]
-        return prepared_data
+                result[key] = data[key]
+
+        if EmployeesService.AVATAR_PATH in result:
+            result[EmployeesService.AVATAR_PATH] = await EmployeesService._upload_file(
+                str(
+                    result[EmployeesService.AVATAR_PATH]
+                )
+            )
+
+        return result
+
+    @staticmethod
+    async def _upload_file(path_to_file: str) -> str:
+        with open(path_to_file, "rb") as file:
+            form = FormData()
+            form.add_field('file', file, filename=path_to_file, content_type="image/jpeg")
+
+            async with ClientSession() as session:
+                try:
+                    async with session.post(EmployeesService.API_UPLOAD_FILE, data=form) as response:
+                        if response.status == 200:
+                            print("Файл успешно загружен")
+                            response_json = await response.json()
+                            return response_json['filename']
+                        else:
+                            print(f"Ошибка загрузки файла: {response.status}")
+                except ClientError as err:
+                    print(f"An error occurred: {err}")
+
+        os.remove(path_to_file)
 
     @staticmethod
     async def new(state: FSMContext) -> NoReturn:
-        data = await state.get_data()
-        prepared_data = EmployeesService._prepare_data(data)
+        employee = await state.get_data()
+        prepared_data = await EmployeesService._prepare_employee(employee)
         print(prepared_data)
         async with ClientSession() as session:
             try:

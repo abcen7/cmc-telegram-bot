@@ -27,3 +27,15 @@ class UserAddMessages(Enum):
     USER_ADD_MESSAGE_FILLING_AVATAR = "💬 Прикрепите аватарку сотрудника (Опционально)"
     USER_ADD_MESSAGE_FILLING_DONE = "✅ Отлично! Вы успешно создали пользователя!"
     USER_ADD_MESSAGE_FILLING_STOPPED = "❌ Заполнение прервано. Все данные сброшены."
+
+
+class UserSearchMessages(Enum):
+    USER_SEARCH_MESSAGE = """
+    🔎 Давайте найдем пользователя...
+    Выберете, по какой характеристике его искать ниже
+    """
+    USER_SEARCH_NAME = "Имя"
+    USER_SEARCH_SURNAME = "Фамилия"
+    USER_SEARCH_PATRONYMIC = "Отчество"
+    USER_SEARCH_PROJECT = "Проект"
+    USER_SEARCH_JOB_TITLE = "Должность"

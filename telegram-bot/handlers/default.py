@@ -34,8 +34,3 @@ async def process_commands_button(message: types.Message):
         "Активный список команд:",
         reply_markup=get_commands_keyboard()
     )
-
-
-@dp.message_handler(commands=["user_add"])
-async def user_add(message: types.Message) -> None:
-    pass
