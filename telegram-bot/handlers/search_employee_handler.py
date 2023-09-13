@@ -1,10 +1,11 @@
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, ParseMode
 
 from handlers.constants import UserSearchMessages, UserAddMessages, SearchType
 from handlers.fill_employee_handler import FillEmployee
+from handlers.utils import get_result_or_failed
 from keyboards.constants import USER_SEARCH_DATA
 from keyboards.executor import executor_cb, get_search_keyboard, get_main_keyboard
 from main import bot, dp
@@ -33,7 +34,10 @@ async def search_employee_by_name(message: types.Message) -> None:
 @dp.message_handler(state=SearchEmployee.search_name_data)
 async def process_search_employee_by_name(message: types.Message, state: FSMContext):
     search_data = message.text
-    await EmployeesService.search(search_data, SearchType.NAME)
+    api_result = await EmployeesService.search(search_data, SearchType.NAME)
+    formatted_result = await get_result_or_failed(api_result)
+    for result in formatted_result:
+        await message.answer(result, parse_mode=ParseMode.HTML, disable_web_page_preview=False)
     await state.finish()
 
 

@@ -6,6 +6,7 @@ from base import BaseModelWithConfig
 
 
 class Employee(BaseModelWithConfig):
+    id: str = Field(alias="_id")
     name: str = Field()
     patronymic: Optional[str] = Field(default=None)
     surname: str = Field()

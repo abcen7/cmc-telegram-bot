@@ -64,12 +64,12 @@ class EmployeesService:
                 print(f"An error occurred: {err}")
 
     @staticmethod
-    async def search(search_data: str, search_type: SearchType) -> NoReturn:
+    async def search(search_data: str, search_type: SearchType) -> List[Dict[str, str]]:
         data = {search_type.value: search_data}
         async with ClientSession() as session:
             try:
                 async with session.post(EmployeesService.API_SEARCH, json=data) as response:
-                    print(await response.json())
                     response.raise_for_status()
+                    return await response.json()
             except ClientError as err:
                 print(f"An error occurred: {err}")
