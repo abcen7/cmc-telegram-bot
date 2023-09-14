@@ -11,7 +11,8 @@ import services
 from config import TEMP_STATIC_PATH
 from handlers.constants import EmployeeCreateMessages, EmployeeAskDataMessages, EmployeeUpdateMessages
 from handlers.default import process_commands_button
-from keyboards.executor import executor_cb, get_optional_field_keyboard, get_stop_filling_keyboard, get_main_keyboard
+from keyboards.executor import executor_cb, get_optional_field_keyboard, get_stop_filling_keyboard, get_main_keyboard, \
+    get_dont_update_field_keyboard, get_optional_and_dont_update_keyboard
 from main import bot, dp
 
 from keyboards.constants import \
@@ -72,10 +73,10 @@ async def process_id(message: types.Message, state: FSMContext):
     employee_id = message.text
     # Is employee exist?
     if await EmployeesService.is_employee_exist(employee_id):
-        await state.update_data(name=employee_id)
+        await state.update_data(id=employee_id)
         await message.answer(
             EmployeeAskDataMessages.NAME.value,
-            reply_markup=get_optional_field_keyboard()
+            reply_markup=get_dont_update_field_keyboard()
         )
         await UpdateEmployee.next()
     else:
@@ -90,7 +91,7 @@ async def process_name(message: types.Message, state: FSMContext):
     await state.update_data(name=name)
     await message.answer(
         EmployeeAskDataMessages.PATRONYMIC.value,
-        reply_markup=get_optional_field_keyboard()
+        reply_markup=get_optional_and_dont_update_keyboard()
     )
     await UpdateEmployee.next()
 
@@ -101,7 +102,7 @@ async def process_patronymic(message: types.Message, state: FSMContext):
     await state.update_data(patronymic=patronymic)
     await message.answer(
         EmployeeAskDataMessages.SURNAME.value,
-        reply_markup=get_stop_filling_keyboard()
+        reply_markup=get_dont_update_field_keyboard()
     )
     await UpdateEmployee.next()
 
@@ -128,7 +129,7 @@ async def process_project(message: types.Message, state: FSMContext):
     await state.update_data(project=project)
     await message.answer(
         EmployeeAskDataMessages.AVATAR.value,
-        reply_markup=get_optional_field_keyboard()
+        reply_markup=get_optional_and_dont_update_keyboard()
     )
     await UpdateEmployee.next()
 
@@ -144,10 +145,9 @@ async def process_avatar(message: types.Message, state: FSMContext):
         await state.update_data(avatar_path=full_file_path)
     else:
         await state.update_data(avatar_path=OPTIONAL_FIELD)
-    print(await state.get_data())
     await message.answer(
         EmployeeUpdateMessages.SUCCESS.value,
         reply_markup=get_main_keyboard()
     )
-    # await EmployeesService.new(state)
+    await EmployeesService.update(state)
     await state.finish()

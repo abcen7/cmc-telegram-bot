@@ -13,7 +13,7 @@ from keyboards.constants import \
     EMPLOYEE_DELETE_TEXT, \
     EMPLOYEE_SEARCH_TEXT, \
     OPTIONAL_FIELD, \
-    STOP_FILLING, EMPLOYEE_UPDATE_TEXT, EMPLOYEE_UPDATE_DATA
+    STOP_FILLING, EMPLOYEE_UPDATE_TEXT, EMPLOYEE_UPDATE_DATA, DONT_UPDATE_FIELD
 
 from keyboards.constants import \
     EMPLOYEE_ADD_DATA, \
@@ -68,9 +68,23 @@ def get_commands_keyboard() -> InlineKeyboardMarkup:
     )
 
 
+def get_optional_and_dont_update_keyboard() -> InlineKeyboardMarkup:
+    return ReplyKeyboardMarkup(resize_keyboard=True).add(
+        KeyboardButton(OPTIONAL_FIELD)
+    ).add(
+        KeyboardButton(DONT_UPDATE_FIELD)
+    )
+
+
 def get_optional_field_keyboard() -> InlineKeyboardMarkup:
     return ReplyKeyboardMarkup(resize_keyboard=True).add(
         KeyboardButton(OPTIONAL_FIELD)
+    )
+
+
+def get_dont_update_field_keyboard() -> InlineKeyboardMarkup:
+    return ReplyKeyboardMarkup(resize_keyboard=True).add(
+        KeyboardButton(DONT_UPDATE_FIELD)
     )
 
 

@@ -11,4 +11,5 @@ EMPLOYEE_REMOVE_DATA = "employee_remove"
 EMPLOYEE_SEARCH_DATA = "employee_search"
 
 OPTIONAL_FIELD = "🚫 Не указывать"
+DONT_UPDATE_FIELD = "🚫 Оставить текущее значение"
 STOP_FILLING = "🚫 Остановить заполнение"

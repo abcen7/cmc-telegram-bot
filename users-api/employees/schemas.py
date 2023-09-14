@@ -6,12 +6,12 @@ from .utils import get_current_time_in_unix_format
 
 
 class UpdateEmployee(BaseModelWithConfig):
-    name: Optional[str] = Field()
-    patronymic: Optional[str] = Field()
-    surname: Optional[str] = Field()
-    job_title: Optional[str] = Field()
-    project: Optional[str] = Field()
-    avatar_path: Optional[str] = Field()
+    name: Optional[str] = Field(default=None)
+    patronymic: Optional[str] = Field(default=None)
+    surname: Optional[str] = Field(default=None)
+    job_title: Optional[str] = Field(default=None)
+    project: Optional[str] = Field(default=None)
+    avatar_path: Optional[str] = Field(default=None)
     updated: Optional[float] = Field(default=None, validate_default=True)
 
     @validator("updated", pre=True, check_fields=False)

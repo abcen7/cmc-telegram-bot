@@ -6,7 +6,7 @@ from aiohttp import ClientSession, ClientError, FormData
 
 from config import API_URL
 from handlers.constants import SearchType
-from keyboards.constants import OPTIONAL_FIELD
+from keyboards.constants import OPTIONAL_FIELD, DONT_UPDATE_FIELD
 
 
 class EmployeesService:
@@ -16,10 +16,26 @@ class EmployeesService:
     API_SEARCH = API_URL + '/search/employees'
 
     @staticmethod
-    async def _prepare_employee(data: Dict[str, str]) -> Dict[str, str]:
+    async def _prepare_employee_for_create(data: Dict[str, str]) -> Dict[str, str]:
         result = {}
         for key in data:
             if data[key] != OPTIONAL_FIELD:
+                result[key] = data[key]
+
+        if EmployeesService.AVATAR_PATH in result:
+            result[EmployeesService.AVATAR_PATH] = await EmployeesService._upload_file(
+                str(
+                    result[EmployeesService.AVATAR_PATH]
+                )
+            )
+
+        return result
+
+    @staticmethod
+    async def _prepare_employee_for_update(data: Dict[str, str]) -> Dict[str, str]:
+        result = {}
+        for key in data:
+            if data[key] != OPTIONAL_FIELD and data[key] != DONT_UPDATE_FIELD:
                 result[key] = data[key]
 
         if EmployeesService.AVATAR_PATH in result:
@@ -67,7 +83,7 @@ class EmployeesService:
     @staticmethod
     async def new(state: FSMContext) -> NoReturn:
         employee = await state.get_data()
-        prepared_data = await EmployeesService._prepare_employee(employee)
+        prepared_data = await EmployeesService._prepare_employee_for_create(employee)
         print(prepared_data)
         async with ClientSession() as session:
             try:
@@ -75,6 +91,23 @@ class EmployeesService:
                     response.raise_for_status()
             except ClientError as err:
                 print(f"An error occurred: {err}")
+
+    @staticmethod
+    async def update(state: FSMContext) -> NoReturn:
+        employee = await state.get_data()
+        prepared_data = await EmployeesService._prepare_employee_for_update(employee)
+        employee_id = prepared_data.pop('id')
+        async with ClientSession() as session:
+            try:
+                async with session.patch(
+                        EmployeesService.API_EMPLOYEES + f'/{employee_id}',
+                        json=prepared_data
+                ) as response:
+                    response.raise_for_status()
+                    print(await response.json())
+            except ClientError as err:
+                print(f"An error occurred: {err}")
+        print(employee_id, prepared_data)
 
     @staticmethod
     async def search(search_data: str, search_type: SearchType) -> List[Dict[str, str]]:
