@@ -77,7 +77,6 @@ class UserSearchMessages(Enum):
 
 
 API_TO_RESULT = {
-    '_id': '<b>ID</b>: ',
     'name': '<b>Имя</b>: ',
     'patronymic': '<b>Отчество</b>: ',
     'surname': '<b>Фамилия</b>: ',

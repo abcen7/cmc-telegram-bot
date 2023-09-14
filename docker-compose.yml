@@ -8,10 +8,10 @@ services:
       - "8080:8080"
     environment:
       - INIT_TABLES=1
-      - DATABASE_URL=mongodb://localhost:27017
+      - DATABASE_URL=mongodb://users_api_database:27017
       - DB_NAME=users
       - APP_STAGE=true
-      - S3_WORKER_API=http://localhost:8001
+      - S3_WORKER_API=http://api_s3:8001
     restart: always
     depends_on:
       - users_api_database
@@ -39,9 +39,9 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - MINIO_ACCESS_KEY=9a225csauh1LJnfT1lSa
-      - MINIO_SECRET_KEY=VoY6C1plguUVLuQX3IpZZ2vwzTYx9aaL3vLdthxD
-      - MINIO_ENDPOINT_URL=http://s3.nielsen.su
+      - MINIO_ACCESS_KEY=pfhVNVb5fIQmZn9oCDUg
+      - MINIO_SECRET_KEY=5DxyBl2f8jOwldnwtyS0xg06dtKbzvpEAa8M1amX
+      - MINIO_ENDPOINT_URL=https://s3.nielsen.su
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
     restart: always
@@ -55,8 +55,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      - MINIO_ACCESS_KEY=9a225csauh1LJnfT1lSa
-      - MINIO_SECRET_KEY=VoY6C1plguUVLuQX3IpZZ2vwzTYx9aaL3vLdthxD
+      - MINIO_ACCESS_KEY=pfhVNVb5fIQmZn9oCDUg
+      - MINIO_SECRET_KEY=5DxyBl2f8jOwldnwtyS0xg06dtKbzvpEAa8M1amX
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
     volumes:

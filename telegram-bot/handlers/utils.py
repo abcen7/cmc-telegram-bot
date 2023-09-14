@@ -5,11 +5,12 @@ from aiogram import types
 from aiogram.types import ParseMode
 
 from handlers.constants import SearchResultMessages, API_TO_RESULT, NEW_LINE, AVATAR_PATH, CREATED, ID
+from services import EmployeesService
 
 
 async def get_result_or_failed(
-    employees: List[Dict[str, str]],
-    message: types.Message,
+        employees: List[Dict[str, str]],
+        message: types.Message,
 ) -> NoReturn:
     print(employees)
     if not employees or len(employees) == 0:
@@ -23,12 +24,13 @@ async def get_result_or_failed(
             employee_card = []
             for key in employee:
                 if key == ID:
-                    employee_card.append(f'<pre>{employee[key]}</pre>')
+                    employee_card.append(f'<b>ID: </b><pre>{employee[key]}</pre>')
                 if key == AVATAR_PATH:
-                    employee_card.append(f'<a href="{employee[key]}">&#8205;</a>')
+                    avatar_file = await EmployeesService.get_file(employee[key])
+                    employee_card.append(f'<a href="{avatar_file}">&#8205;</a>')
                 if key == CREATED:
                     employee_card.append(f'<b>Дата прихода</b>: {datetime.datetime.fromtimestamp(employee[key])}')
-                if key in API_TO_RESULT:
+                if key in API_TO_RESULT and employee[key] is not None:
                     employee_card.append(str(API_TO_RESULT[key]) + str(employee[key]))
             await message.answer(
                 NEW_LINE.join(employee_card),

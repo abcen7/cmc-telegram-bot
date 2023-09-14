@@ -14,6 +14,7 @@ class EmployeesService:
     API_UPLOAD_FILE = API_URL + '/upload_file'
     AVATAR_PATH = 'avatar_path'
     API_SEARCH = API_URL + '/search/employees'
+    API_GET_FILE = API_URL + '/file'
 
     @staticmethod
     async def _prepare_employee_for_create(data: Dict[str, str]) -> Dict[str, str]:
@@ -126,6 +127,16 @@ class EmployeesService:
         async with ClientSession() as session:
             try:
                 async with session.post(EmployeesService.API_SEARCH, json=data) as response:
+                    response.raise_for_status()
+                    return await response.json()
+            except ClientError as err:
+                print(f"An error occurred: {err}")
+
+    @staticmethod
+    async def get_file(file_name: str) -> str:
+        async with ClientSession() as session:
+            try:
+                async with session.get(EmployeesService.API_GET_FILE + f'/{file_name}') as response:
                     response.raise_for_status()
                     return await response.json()
             except ClientError as err:
