@@ -52,6 +52,19 @@ class EmployeesService:
         os.remove(path_to_file)
 
     @staticmethod
+    async def is_employee_exist(employee_id: str) -> bool:
+        async with ClientSession() as session:
+            try:
+                async with session.get(EmployeesService.API_EMPLOYEES + f'/{employee_id}') as response:
+                    response.raise_for_status()
+                    if response.status == 200:
+                        return True
+                    else:
+                        return False
+            except ClientError as err:
+                print(f"An error occurred: {err}")
+
+    @staticmethod
     async def new(state: FSMContext) -> NoReturn:
         employee = await state.get_data()
         prepared_data = await EmployeesService._prepare_employee(employee)

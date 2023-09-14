@@ -9,16 +9,16 @@ from aiogram.utils.callback_data import CallbackData
 from handlers.constants import UserSearchMessages
 from keyboards.constants import \
     COMMANDS_MESSAGE, \
-    USER_ADD_TEXT, \
-    USER_REMOVE_TEXT, \
-    USER_SEARCH_TEXT, \
+    EMPLOYEE_ADD_TEXT, \
+    EMPLOYEE_DELETE_TEXT, \
+    EMPLOYEE_SEARCH_TEXT, \
     OPTIONAL_FIELD, \
-    STOP_FILLING
+    STOP_FILLING, EMPLOYEE_UPDATE_TEXT, EMPLOYEE_UPDATE_DATA
 
 from keyboards.constants import \
-    USER_ADD_DATA, \
-    USER_REMOVE_DATA, \
-    USER_SEARCH_DATA
+    EMPLOYEE_ADD_DATA, \
+    EMPLOYEE_REMOVE_DATA, \
+    EMPLOYEE_SEARCH_DATA
 
 executor_cb = CallbackData("executor", "action")
 
@@ -34,25 +34,33 @@ def get_commands_keyboard() -> InlineKeyboardMarkup:
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text=USER_ADD_TEXT,
+                    text=EMPLOYEE_ADD_TEXT,
                     callback_data=executor_cb.new(
-                        action=USER_ADD_DATA
+                        action=EMPLOYEE_ADD_DATA
                     ),
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text=USER_REMOVE_TEXT,
+                    text=EMPLOYEE_UPDATE_TEXT,
                     callback_data=executor_cb.new(
-                        action=USER_REMOVE_DATA
+                        action=EMPLOYEE_UPDATE_DATA
                     ),
                 )
             ],
             [
                 InlineKeyboardButton(
-                    text=USER_SEARCH_TEXT,
+                    text=EMPLOYEE_DELETE_TEXT,
                     callback_data=executor_cb.new(
-                        action=USER_SEARCH_DATA
+                        action=EMPLOYEE_REMOVE_DATA
+                    ),
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=EMPLOYEE_SEARCH_TEXT,
+                    callback_data=executor_cb.new(
+                        action=EMPLOYEE_SEARCH_DATA
                     ),
                 )
             ],

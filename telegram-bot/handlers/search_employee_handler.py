@@ -3,10 +3,10 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import CallbackQuery, ParseMode
 
-from handlers.constants import UserSearchMessages, UserAddMessages, SearchType
+from handlers.constants import UserSearchMessages, EmployeeCreateMessages, SearchType
 from handlers.fill_employee_handler import FillEmployee
 from handlers.utils import get_result_or_failed
-from keyboards.constants import USER_SEARCH_DATA
+from keyboards.constants import EMPLOYEE_SEARCH_DATA
 from keyboards.executor import executor_cb, get_search_keyboard, get_main_keyboard
 from main import bot, dp
 from services import EmployeesService

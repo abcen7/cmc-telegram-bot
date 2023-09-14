@@ -4,7 +4,7 @@ from typing import Dict, List, NoReturn
 from aiogram import types
 from aiogram.types import ParseMode
 
-from handlers.constants import SearchResultMessages, API_TO_RESULT, NEW_LINE, AVATAR_PATH, CREATED
+from handlers.constants import SearchResultMessages, API_TO_RESULT, NEW_LINE, AVATAR_PATH, CREATED, ID
 
 
 async def get_result_or_failed(
@@ -22,10 +22,11 @@ async def get_result_or_failed(
         for employee in employees[:5]:
             employee_card = []
             for key in employee:
+                if key == ID:
+                    employee_card.append(f'<pre>{employee[key]}</pre>')
                 if key == AVATAR_PATH:
                     employee_card.append(f'<a href="{employee[key]}">&#8205;</a>')
                 if key == CREATED:
-                    print(datetime.datetime.fromtimestamp(employee[key]))
                     employee_card.append(f'<b>Дата прихода</b>: {datetime.datetime.fromtimestamp(employee[key])}')
                 if key in API_TO_RESULT:
                     employee_card.append(str(API_TO_RESULT[key]) + str(employee[key]))
