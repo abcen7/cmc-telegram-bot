@@ -110,6 +110,18 @@ class EmployeesService:
         print(employee_id, prepared_data)
 
     @staticmethod
+    async def delete(employee_id: str) -> NoReturn:
+        async with ClientSession() as session:
+            try:
+                async with session.delete(
+                        EmployeesService.API_EMPLOYEES + f'/{employee_id}',
+                ) as response:
+                    response.raise_for_status()
+                    print(await response.json())
+            except ClientError as err:
+                print(f"An error occurred: {err}")
+
+    @staticmethod
     async def search(search_data: str, search_type: SearchType) -> List[Dict[str, str]]:
         data = {search_type.value: search_data}
         async with ClientSession() as session:
