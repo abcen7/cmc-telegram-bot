@@ -19,6 +19,14 @@ class SearchEmployee(StatesGroup):
     search_project_data = State()
 
 
+@dp.callback_query_handler(executor_cb.filter(action=EMPLOYEE_SEARCH_DATA))
+async def process_search_employee_callback(call: CallbackQuery, callback_data) -> None:
+    await bot.send_message(
+        call.from_user.id,
+        UserSearchMessages.LIST_SEARCH_COMMANDS.value
+    )
+
+
 @dp.message_handler(commands=["search_employee_name"])
 async def search_employee_by_name(message: types.Message) -> None:
     """

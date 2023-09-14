@@ -67,6 +67,13 @@ class UserSearchMessages(Enum):
     """
     USER_SEARCH_WAITING = "Бот уже ищет сотрудника!"
     USER_SEARCH_ASK = "[💬] Введите данные: "
+    LIST_SEARCH_COMMANDS = """
+    [🔎] Бот умеет искать по 4 характеристикам: имя, фамилия, проект, позиция на работе:
+    - /search_employee_name
+    - /search_employee_surname
+    - /search_employee_job_title
+    - /search_employee_project
+    """
 
 
 API_TO_RESULT = {
