@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  users_api:
+    build: ./users-api
+    container_name: users_api
+    ports:
+      - "8080:8080"
+    environment:
+      - INIT_TABLES=1
+      - DATABASE_URL=mongodb://localhost:27017
+      - DB_NAME=users
+      - APP_STAGE=true
+      - S3_WORKER_API=http://localhost:8001
+    restart: always
+    depends_on:
+      - users_api_database
+    volumes:
+      - ./:/app
+
+  users_api_database:
+    image: mongo:6.0.9
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_volume:/data/db
+
+  telegram_bot:
+    build: ./telegram-bot
+    container_name: telegram_bot
+    environment:
+      - TELEGRAM_BOT_TOKEN=6698296675:AAEYy-AH2nRoRfi8fzUd57xEZne0iDmQirw
+      - API_URL=http://users_api:8080
+      - TEMP_STATIC_PATH=temp_static
+
+  api_s3:
+    build: ./s3-worker
+    ports:
+      - "8001:8001"
+    environment:
+      - MINIO_ACCESS_KEY=9a225csauh1LJnfT1lSa
+      - MINIO_SECRET_KEY=VoY6C1plguUVLuQX3IpZZ2vwzTYx9aaL3vLdthxD
+      - MINIO_ENDPOINT_URL=http://s3.nielsen.su
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    restart: always
+    volumes:
+      - ./:/app
+
+  s3_storage:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ACCESS_KEY=9a225csauh1LJnfT1lSa
+      - MINIO_SECRET_KEY=VoY6C1plguUVLuQX3IpZZ2vwzTYx9aaL3vLdthxD
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - ./s3-data:/data
+
+
+
+volumes:
+  mongodb_data_volume:

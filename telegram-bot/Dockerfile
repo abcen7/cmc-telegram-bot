@@ -1,7 +1,7 @@
-FROM python:3.10.7
+FROM python:3.10
 
 # set work directory
-WORKDIR /app
+WORKDIR /telegram-bot
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -15,5 +15,4 @@ RUN pip install -r requirements.txt
 # copy project
 COPY . .
 
-RUN ["chmod", "+x", "entrypoint.sh"]
-ENTRYPOINT ["sh", "entrypoint.sh"]
+CMD ["python3", "main.py"]

@@ -1,7 +1,7 @@
 FROM python:3.10
 
 # set work directory
-WORKDIR /app
+WORKDIR /users-api
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1

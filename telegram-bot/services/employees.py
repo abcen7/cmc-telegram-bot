@@ -59,13 +59,12 @@ class EmployeesService:
                         if response.status == 200:
                             print("Файл успешно загружен")
                             response_json = await response.json()
+                            os.remove(path_to_file)
                             return response_json['filename']
                         else:
                             print(f"Ошибка загрузки файла: {response.status}")
                 except ClientError as err:
                     print(f"An error occurred: {err}")
-
-        os.remove(path_to_file)
 
     @staticmethod
     async def is_employee_exist(employee_id: str) -> bool:
