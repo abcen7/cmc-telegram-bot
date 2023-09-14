@@ -1,15 +1,24 @@
 import datetime
-from typing import Dict, List
+from typing import Dict, List, NoReturn
+
+from aiogram import types
+from aiogram.types import ParseMode
 
 from handlers.constants import SearchResultMessages, API_TO_RESULT, NEW_LINE, AVATAR_PATH, CREATED
 
 
-async def get_result_or_failed(employees: List[Dict[str, str]]) -> List[str]:
+async def get_result_or_failed(
+    employees: List[Dict[str, str]],
+    message: types.Message,
+) -> NoReturn:
     print(employees)
-    if len(employees) == 0:
-        return SearchResultMessages.SEARCH_RESULT_NOT_FOUND.value
+    if not employees or len(employees) == 0:
+        await message.answer(
+            SearchResultMessages.SEARCH_RESULT_NOT_FOUND.value,
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=False
+        )
     else:
-        employee_cards = []
         for employee in employees[:5]:
             employee_card = []
             for key in employee:
@@ -20,5 +29,8 @@ async def get_result_or_failed(employees: List[Dict[str, str]]) -> List[str]:
                     employee_card.append(f'<b>Дата прихода</b>: {datetime.datetime.fromtimestamp(employee[key])}')
                 if key in API_TO_RESULT:
                     employee_card.append(str(API_TO_RESULT[key]) + str(employee[key]))
-            employee_cards.append(NEW_LINE.join(employee_card))
-        return employee_cards
+            await message.answer(
+                NEW_LINE.join(employee_card),
+                parse_mode=ParseMode.HTML,
+                disable_web_page_preview=False
+            )

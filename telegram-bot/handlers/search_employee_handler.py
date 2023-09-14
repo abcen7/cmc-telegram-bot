@@ -35,9 +35,7 @@ async def search_employee_by_name(message: types.Message) -> None:
 async def process_search_employee_by_name(message: types.Message, state: FSMContext):
     search_data = message.text
     api_result = await EmployeesService.search(search_data, SearchType.NAME)
-    formatted_result = await get_result_or_failed(api_result)
-    for result in formatted_result:
-        await message.answer(result, parse_mode=ParseMode.HTML, disable_web_page_preview=False)
+    await get_result_or_failed(api_result, message)
     await state.finish()
 
 
@@ -56,7 +54,8 @@ async def search_employee_by_surname(message: types.Message) -> None:
 @dp.message_handler(state=SearchEmployee.search_surname_data)
 async def process_search_employee_by_surname(message: types.Message, state: FSMContext):
     search_data = message.text
-    await EmployeesService.search(search_data, SearchType.SURNAME)
+    api_result = await EmployeesService.search(search_data, SearchType.SURNAME)
+    await get_result_or_failed(api_result, message)
     await state.finish()
 
 
@@ -75,7 +74,8 @@ async def search_employee_by_job_title(message: types.Message) -> None:
 @dp.message_handler(state=SearchEmployee.search_job_title_data)
 async def process_search_employee_by_job_title(message: types.Message, state: FSMContext):
     search_data = message.text
-    await EmployeesService.search(search_data, SearchType.JOB_TITLE)
+    api_result = await EmployeesService.search(search_data, SearchType.JOB_TITLE)
+    await get_result_or_failed(api_result, message)
     await state.finish()
 
 
@@ -94,5 +94,6 @@ async def search_employee_by_project(message: types.Message) -> None:
 @dp.message_handler(state=SearchEmployee.search_project_data)
 async def process_search_employee_by_project(message: types.Message, state: FSMContext):
     search_data = message.text
-    await EmployeesService.search(search_data, SearchType.PROJECT)
+    api_result = await EmployeesService.search(search_data, SearchType.PROJECT)
+    await get_result_or_failed(api_result, message)
     await state.finish()
