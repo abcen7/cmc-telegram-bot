@@ -60,9 +60,10 @@ services:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
     volumes:
-      - ./s3-data:/data
+      - s3_data_volume:/data
 
 
 
 volumes:
   mongodb_data_volume:
+  s3_data_volume:

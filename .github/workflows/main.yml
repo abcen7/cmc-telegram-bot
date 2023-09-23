@@ -44,4 +44,4 @@ jobs:
             whoami
             cd ${{ secrets.DEPLOY_PATH }}
             docker-compose stop
-            docker-compose up --build
+            docker-compose up --build -d
