@@ -2,6 +2,6 @@
 
 Запуск: `docker-compose up`
 
-Внимание: нужно заполнить dev-docker-compose.yml
+Внимание: не забудьте заполнить dev-docker-compose.yml
 
 TestBot: https://t.me/cmc_users_management_bot
