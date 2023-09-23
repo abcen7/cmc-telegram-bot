@@ -39,8 +39,8 @@ services:
     ports:
       - "8001:8001"
     environment:
-      - MINIO_ACCESS_KEY=P4p7tsFQr5NoGljBfI2W
-      - MINIO_SECRET_KEY=CeQywn3G74phvpjicvK7r9Rc84maNYXMtwZmZcXj
+      - MINIO_ACCESS_KEY=AMpVPBc9Yo7igLRCKWji
+      - MINIO_SECRET_KEY=cOqtrPlKk6T4zoinTmJQltEGiEj1g9Z2tlDEERRh
       - MINIO_ENDPOINT_URL=https://s3.nielsen.su
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
@@ -55,8 +55,8 @@ services:
       - "9000:9000"
       - "9001:9001"
     environment:
-      - MINIO_ACCESS_KEY=P4p7tsFQr5NoGljBfI2W
-      - MINIO_SECRET_KEY=CeQywn3G74phvpjicvK7r9Rc84maNYXMtwZmZcXj
+      - MINIO_ACCESS_KEY=AMpVPBc9Yo7igLRCKWji
+      - MINIO_SECRET_KEY=cOqtrPlKk6T4zoinTmJQltEGiEj1g9Z2tlDEERRh
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
     volumes:
