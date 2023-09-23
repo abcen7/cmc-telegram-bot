@@ -43,7 +43,7 @@ async def process_add_user_callback(call: CallbackQuery, callback_data) -> None:
     await FillEmployee.name.set()
 
 
-@dp.message_handler(commands=["user_add"])
+@dp.message_handler(commands=["employee_add"])
 async def process_add_user_command(message: types.Message):
     await message.answer(
         EmployeeCreateMessages.CREATE.value

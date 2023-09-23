@@ -20,6 +20,7 @@ class SearchEmployee(StatesGroup):
 
 
 @dp.callback_query_handler(executor_cb.filter(action=EMPLOYEE_SEARCH_DATA))
+@dp.message_handler(commands=["employee_search"])
 async def process_search_employee_callback(call: CallbackQuery, callback_data) -> None:
     await bot.send_message(
         call.from_user.id,

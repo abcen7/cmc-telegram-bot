@@ -1,8 +1,11 @@
 from aiogram import types
 from aiogram.dispatcher.filters import Text
 
-from keyboards.executor import get_main_keyboard, get_commands_keyboard
 from main import dp
+
+from keyboards.executor import \
+    get_main_keyboard, \
+    get_commands_keyboard
 
 from handlers.constants import \
     WELCOME_MESSAGE, \

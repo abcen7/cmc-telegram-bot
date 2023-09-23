@@ -10,9 +10,10 @@ WELCOME_MESSAGE = """
 
 HELP_MESSAGE = """
 Список моих команд
-- /user_add
-- /user_remove
-- /user_search
+- /employee_add - создать карточку сотрудника
+- /employee_update - обновить карточку сотрудника
+- /employee_delete - удалить карточку сотрудника
+- /employee_search - список команд поиска
 """
 
 
