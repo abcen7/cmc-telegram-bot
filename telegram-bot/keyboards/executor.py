@@ -13,7 +13,7 @@ from keyboards.constants import \
     EMPLOYEE_DELETE_TEXT, \
     EMPLOYEE_SEARCH_TEXT, \
     OPTIONAL_FIELD, \
-    STOP_FILLING, EMPLOYEE_UPDATE_TEXT, EMPLOYEE_UPDATE_DATA, DONT_UPDATE_FIELD
+    STOP_FILLING, EMPLOYEE_UPDATE_TEXT, EMPLOYEE_UPDATE_DATA, DONT_UPDATE_FIELD, EmployeeSearchButtons
 
 from keyboards.constants import \
     EMPLOYEE_ADD_DATA, \
@@ -95,10 +95,39 @@ def get_stop_filling_keyboard() -> InlineKeyboardMarkup:
 
 
 def get_search_keyboard() -> InlineKeyboardMarkup:
-    return ReplyKeyboardMarkup(resize_keyboard=True).add(
-        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_NAME.value),
-        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_SURNAME.value),
-        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_PROJECT.value),
-        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_JOB_TITLE.value),
-        KeyboardButton(UserSearchKeyboardTypes.USER_SEARCH_UNION_SEARCH.value),
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=EmployeeSearchButtons.NAME_TEXT.value,
+                    callback_data=executor_cb.new(
+                        action=EmployeeSearchButtons.NAME_DATA.value
+                    ),
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=EmployeeSearchButtons.SURNAME_TEXT.value,
+                    callback_data=executor_cb.new(
+                        action=EmployeeSearchButtons.SURNAME_DATA.value
+                    ),
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=EmployeeSearchButtons.PROJECT_TEXT.value,
+                    callback_data=executor_cb.new(
+                        action=EmployeeSearchButtons.PROJECT_DATA.value
+                    ),
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=EmployeeSearchButtons.JOB_TITLE_TEXT.value,
+                    callback_data=executor_cb.new(
+                        action=EmployeeSearchButtons.JOB_TITLE_DATA.value
+                    ),
+                )
+            ],
+        ],
     )

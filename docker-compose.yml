@@ -30,7 +30,7 @@ services:
     build: ./telegram-bot
     container_name: telegram_bot
     environment:
-      - TELEGRAM_BOT_TOKEN=6306186753:AAEO46hOwumLMwuZ01YCnDJfCfm8SlGj09Q
+      - TELEGRAM_BOT_TOKEN=6698296675:AAEYy-AH2nRoRfi8fzUd57xEZne0iDmQirw
       - API_URL=http://users_api:8080
       - TEMP_STATIC_PATH=temp_static
 

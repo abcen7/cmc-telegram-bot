@@ -6,7 +6,7 @@ from aiogram.types import CallbackQuery, ParseMode
 from handlers.constants import UserSearchMessages, EmployeeCreateMessages, SearchType
 from handlers.fill_employee_handler import FillEmployee
 from handlers.utils import get_result_or_failed
-from keyboards.constants import EMPLOYEE_SEARCH_DATA
+from keyboards.constants import EMPLOYEE_SEARCH_DATA, EmployeeSearchButtons
 from keyboards.executor import executor_cb, get_search_keyboard, get_main_keyboard
 from main import bot, dp
 from services import EmployeesService
@@ -23,7 +23,8 @@ class SearchEmployee(StatesGroup):
 async def process_search_employee_callback(call: CallbackQuery, callback_data) -> None:
     await bot.send_message(
         call.from_user.id,
-        UserSearchMessages.LIST_SEARCH_COMMANDS.value
+        UserSearchMessages.LIST_SEARCH_COMMANDS.value,
+        reply_markup=get_search_keyboard()
     )
 
 
@@ -35,6 +36,7 @@ async def process_search_employee_command(message: types.Message):
     )
 
 
+@dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.NAME_DATA.value))
 @dp.message_handler(commands=["search_employee_name"])
 async def search_employee_by_name(message: types.Message) -> None:
     """
