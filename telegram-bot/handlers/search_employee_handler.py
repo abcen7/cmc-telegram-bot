@@ -37,6 +37,15 @@ async def process_search_employee_command(message: types.Message):
 
 
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.NAME_DATA.value))
+async def process_search_employee_name_callback(call: CallbackQuery, callback_data) -> None:
+    await bot.send_message(
+        call.from_user.id,
+        UserSearchMessages.USER_SEARCH_ASK.value,
+        reply_markup=get_main_keyboard()
+    )
+    await SearchEmployee.search_name_data.set()
+
+
 @dp.message_handler(commands=["search_employee_name"])
 async def search_employee_by_name(message: types.Message) -> None:
     """
@@ -69,6 +78,16 @@ async def search_employee_by_surname(message: types.Message) -> None:
     await SearchEmployee.search_surname_data.set()
 
 
+@dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.SURNAME_DATA.value))
+async def process_search_employee_surname_callback(call: CallbackQuery, callback_data) -> None:
+    await bot.send_message(
+        call.from_user.id,
+        UserSearchMessages.USER_SEARCH_ASK.value,
+        reply_markup=get_main_keyboard()
+    )
+    await SearchEmployee.search_surname_data.set()
+
+
 @dp.message_handler(state=SearchEmployee.search_surname_data)
 async def process_search_employee_by_surname(message: types.Message, state: FSMContext):
     search_data = message.text
@@ -89,6 +108,16 @@ async def search_employee_by_job_title(message: types.Message) -> None:
     await SearchEmployee.search_job_title_data.set()
 
 
+@dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.JOB_TITLE_DATA.value))
+async def process_search_employee_surname_callback(call: CallbackQuery, callback_data) -> None:
+    await bot.send_message(
+        call.from_user.id,
+        UserSearchMessages.USER_SEARCH_ASK.value,
+        reply_markup=get_main_keyboard()
+    )
+    await SearchEmployee.search_job_title_data.set()
+
+
 @dp.message_handler(state=SearchEmployee.search_job_title_data)
 async def process_search_employee_by_job_title(message: types.Message, state: FSMContext):
     search_data = message.text
@@ -103,6 +132,16 @@ async def search_employee_by_project(message: types.Message) -> None:
     Поиск по проекту сотрудника
     """
     await message.answer(
+        UserSearchMessages.USER_SEARCH_ASK.value,
+        reply_markup=get_main_keyboard()
+    )
+    await SearchEmployee.search_project_data.set()
+
+
+@dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.PROJECT_DATA.value))
+async def process_search_employee_surname_callback(call: CallbackQuery, callback_data) -> None:
+    await bot.send_message(
+        call.from_user.id,
         UserSearchMessages.USER_SEARCH_ASK.value,
         reply_markup=get_main_keyboard()
     )

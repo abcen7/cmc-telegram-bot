@@ -1,6 +1,7 @@
 import os
 from typing import List, Dict, NoReturn, Union
 
+import aiohttp
 from aiogram.dispatcher import FSMContext
 from aiohttp import ClientSession, ClientError, FormData
 
@@ -54,7 +55,7 @@ class EmployeesService:
             form = FormData()
             form.add_field('file', file, filename=path_to_file, content_type="image/jpeg")
 
-            async with ClientSession() as session:
+            async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
                 try:
                     async with session.post(EmployeesService.API_UPLOAD_FILE, data=form) as response:
                         if response.status == 200:
@@ -69,7 +70,7 @@ class EmployeesService:
 
     @staticmethod
     async def is_employee_exist(employee_id: str) -> bool:
-        async with ClientSession() as session:
+        async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
                 async with session.get(EmployeesService.API_EMPLOYEES + f'/{employee_id}') as response:
                     response.raise_for_status()
@@ -85,7 +86,7 @@ class EmployeesService:
         employee = await state.get_data()
         prepared_data = await EmployeesService._prepare_employee_for_create(employee)
         print(prepared_data)
-        async with ClientSession() as session:
+        async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
                 async with session.post(EmployeesService.API_EMPLOYEES, json=prepared_data) as response:
                     response.raise_for_status()
@@ -97,7 +98,7 @@ class EmployeesService:
         employee = await state.get_data()
         prepared_data = await EmployeesService._prepare_employee_for_update(employee)
         employee_id = prepared_data.pop('id')
-        async with ClientSession() as session:
+        async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
                 async with session.patch(
                         EmployeesService.API_EMPLOYEES + f'/{employee_id}',
@@ -111,7 +112,7 @@ class EmployeesService:
 
     @staticmethod
     async def delete(employee_id: str) -> NoReturn:
-        async with ClientSession() as session:
+        async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
                 async with session.delete(
                         EmployeesService.API_EMPLOYEES + f'/{employee_id}',
@@ -124,7 +125,7 @@ class EmployeesService:
     @staticmethod
     async def search(search_data: str, search_type: SearchType) -> List[Dict[str, str]]:
         data = {search_type.value: search_data}
-        async with ClientSession() as session:
+        async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
                 async with session.post(EmployeesService.API_SEARCH, json=data) as response:
                     response.raise_for_status()
@@ -134,7 +135,7 @@ class EmployeesService:
 
     @staticmethod
     async def get_file(file_name: str) -> str:
-        async with ClientSession() as session:
+        async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
                 async with session.get(EmployeesService.API_GET_FILE + f'/{file_name}') as response:
                     response.raise_for_status()
