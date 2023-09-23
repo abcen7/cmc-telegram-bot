@@ -31,8 +31,8 @@ async def help_message(message: types.Message) -> None:
     )
 
 
-@dp.message_handler(Text(equals=COMMANDS_MESSAGE))
 @dp.message_handler(commands=["commands"])
+@dp.message_handler(Text(equals=COMMANDS_MESSAGE))
 async def process_commands_button(message: types.Message):
     await message.answer(
         "Активный список команд:",

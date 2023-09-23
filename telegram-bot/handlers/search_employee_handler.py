@@ -28,7 +28,7 @@ async def process_search_employee_callback(call: CallbackQuery, callback_data) -
 
 
 @dp.message_handler(commands=["employee_search"])
-async def process_update_employee_command(message: types.Message):
+async def process_search_employee_command(message: types.Message):
     await bot.send_message(
         message.from_user.id,
         UserSearchMessages.LIST_SEARCH_COMMANDS.value

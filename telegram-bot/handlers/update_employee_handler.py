@@ -1,4 +1,3 @@
-import os.path
 import uuid
 from pathlib import Path
 
@@ -10,7 +9,6 @@ from aiogram.types import CallbackQuery
 import services
 from config import TEMP_STATIC_PATH
 from handlers.constants import EmployeeCreateMessages, EmployeeAskDataMessages, EmployeeUpdateMessages
-from handlers.default import process_commands_button
 from keyboards.executor import executor_cb, get_optional_field_keyboard, get_stop_filling_keyboard, get_main_keyboard, \
     get_dont_update_field_keyboard, get_optional_and_dont_update_keyboard
 from main import bot, dp
