@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 from aiogram.types import \
     InlineKeyboardButton, \
     InlineKeyboardMarkup, \
@@ -161,3 +163,18 @@ def get_search_keyboard() -> InlineKeyboardMarkup:
             ],
         ],
     )
+
+
+async def get_employees_list_keyboard(employees: List[Dict[str, str]]) -> InlineKeyboardMarkup:
+    buttons = []
+    for employee in employees:
+        buttons.append(
+            [
+                # TODO Refactor
+                InlineKeyboardButton(
+                    f"...{employee['_id'][-5:]} {employee['name']} {employee['surname']} {employee['project']}",
+                    callback_data=f"employee_info_{employee['_id']}"  # TODO Change
+                )
+            ]
+        )
+    return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)

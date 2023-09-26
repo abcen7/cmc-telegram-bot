@@ -14,10 +14,20 @@ class EmployeesRepository:
     def __init__(self) -> None:
         self.collection = Employees
 
-    async def find_many_within_search(self, params_for_search: List[Dict[str, Dict[str, str]]]) -> List[object_model]:
-        return [document async for document in self.collection.find({"$and": params_for_search})]
+    async def find_many_within_search(
+            self,
+            params_for_search: List[Dict[str, Dict[str, str]]],
+            offset: int,
+            limit: int
+    ) -> List[object_model]:
+        return [
+            document async for document in
+            self.collection.find({"$and": params_for_search})
+            .skip(offset)
+            .limit(limit)
+        ]
 
-    async def get_all(self, limit=20) -> List[object_model]:
+    async def get_all(self, limit) -> List[object_model]:
         return [document async for document in self.collection.find({}).limit(limit)]
 
     async def get_by_id(self, object_id: str) -> object_model:

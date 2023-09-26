@@ -13,9 +13,16 @@ class EmployeesService:
     def __init__(self) -> None:
         self.repository = EmployeesRepository()
 
-    async def find_many_within_search(self, params_for_search: SearchEmployee) -> List[object_model]:
+    async def find_many_within_search(
+            self,
+            params_for_search: SearchEmployee,
+            offset: int,
+            limit: int
+    ) -> List[object_model]:
         return await self.repository.find_many_within_search(
-            prepare_model_for_search_query(params_for_search.model_dump(exclude_none=True))
+            prepare_model_for_search_query(params_for_search.model_dump(exclude_none=True)),
+            offset,
+            limit
         )
 
     async def get_all(self, limit: int = 20) -> List[object_model]:

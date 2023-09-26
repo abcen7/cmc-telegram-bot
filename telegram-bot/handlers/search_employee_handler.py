@@ -5,9 +5,9 @@ from aiogram.types import CallbackQuery, ParseMode
 
 from handlers.constants import UserSearchMessages, EmployeeCreateMessages, SearchType
 from handlers.fill_employee_handler import FillEmployee
-from handlers.utils import get_result_or_failed
+from handlers.utils import get_result_or_failed, get_employee_card
 from keyboards.constants import EMPLOYEE_SEARCH_DATA, EmployeeSearchButtons
-from keyboards.executor import executor_cb, get_search_keyboard, get_main_keyboard
+from keyboards.executor import executor_cb, get_search_keyboard, get_main_keyboard, get_employee_card_actions_keyboard
 from main import bot, dp
 from services import EmployeesService
 
@@ -154,3 +154,16 @@ async def process_search_employee_by_project(message: types.Message, state: FSMC
     api_result = await EmployeesService.search(search_data, SearchType.PROJECT)
     await get_result_or_failed(api_result, message)
     await state.finish()
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('employee_info_'))
+async def process_view_employee_card(callback_data: CallbackQuery, call: CallbackQuery = None) -> None:
+    employee_id = callback_data.data.replace('employee_info_', '')
+    employee_from_api = await EmployeesService.get_one(employee_id)
+    await bot.send_message(
+        chat_id=callback_data.from_user.id,
+        text=await get_employee_card(employee_from_api),
+        parse_mode=ParseMode.HTML,
+        disable_web_page_preview=False,
+        reply_markup=get_employee_card_actions_keyboard(employee_id)
+    )
