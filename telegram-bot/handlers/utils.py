@@ -2,19 +2,43 @@ import datetime
 from typing import Dict, List, NoReturn
 
 from aiogram import types
-from aiogram.types import ParseMode
+from aiogram.types import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
 
-from handlers.constants import SearchResultMessages, API_TO_RESULT, NEW_LINE, AVATAR_PATH, CREATED, ID
-from keyboards.executor import get_employee_card_actions_keyboard
+import config
+from handlers.constants import \
+    SearchResultMessages, \
+    API_TO_RESULT, \
+    NEW_LINE, \
+    AVATAR_PATH, \
+    CREATED, \
+    ID, \
+    UserSearchMessages
+from keyboards.executor import get_employee_card_actions_keyboard, get_employees_list_keyboard
 from services import EmployeesService
 
 
 # TODO: refactor to class builder
+async def get_employee_card(employee: Dict[str, str]) -> str:
+    employee_card = []
+    for key in employee:
+        if key == ID:
+            employee_card.append(f'<b>ID: </b><pre>{employee[key]}</pre>')
+        if key == AVATAR_PATH and employee[key] is not None:
+            avatar_file = await EmployeesService.get_file(employee[key])
+            if config.LOCAL_DEVELOPMENT:
+                avatar_file = avatar_file.replace('host.docker.internal', 'localhost')
+            employee_card.append(f'<a href="{avatar_file}">&#8205;</a>')
+        if key == CREATED:
+            employee_card.append(f'<b>Дата прихода</b>: {datetime.datetime.fromtimestamp(employee[key])}')
+        if key in API_TO_RESULT and employee[key] is not None:
+            employee_card.append(str(API_TO_RESULT[key]) + str(employee[key]))
+    return NEW_LINE.join(employee_card)
+
+
 async def get_result_or_failed(
         employees: List[Dict[str, str]],
         message: types.Message,
 ) -> NoReturn:
-    print(employees)
     if not employees or len(employees) == 0:
         await message.answer(
             SearchResultMessages.SEARCH_RESULT_NOT_FOUND.value,
@@ -22,21 +46,7 @@ async def get_result_or_failed(
             disable_web_page_preview=False
         )
     else:
-        for employee in employees[:5]:
-            employee_card = []
-            for key in employee:
-                if key == ID:
-                    employee_card.append(f'<b>ID: </b><pre>{employee[key]}</pre>')
-                if key == AVATAR_PATH:
-                    avatar_file = await EmployeesService.get_file(employee[key])
-                    employee_card.append(f'<a href="{avatar_file}">&#8205;</a>')
-                if key == CREATED:
-                    employee_card.append(f'<b>Дата прихода</b>: {datetime.datetime.fromtimestamp(employee[key])}')
-                if key in API_TO_RESULT and employee[key] is not None:
-                    employee_card.append(str(API_TO_RESULT[key]) + str(employee[key]))
-            await message.answer(
-                NEW_LINE.join(employee_card),
-                parse_mode=ParseMode.HTML,
-                disable_web_page_preview=False,
-                reply_markup=get_employee_card_actions_keyboard(employee[ID])
-            )
+        await message.answer(
+            UserSearchMessages.LIST_EMPLOYEES.value,
+            reply_markup=await get_employees_list_keyboard(employees)
+        )

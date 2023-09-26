@@ -17,6 +17,8 @@ class EmployeesService:
     API_SEARCH = API_URL + '/search/employees'
     API_GET_FILE = API_URL + '/file'
 
+    LIMIT_EMPLOYEES_SEARCH = 20
+
     @staticmethod
     async def _prepare_employee_for_create(data: Dict[str, str]) -> Dict[str, str]:
         result = {}
@@ -94,6 +96,18 @@ class EmployeesService:
                 print(f"An error occurred: {err}")
 
     @staticmethod
+    async def get_one(employee_id: str) -> Dict[str, str]:
+        async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+            try:
+                async with session.get(
+                        EmployeesService.API_EMPLOYEES + f'/{employee_id}',
+                ) as response:
+                    response.raise_for_status()
+                    return await response.json()
+            except ClientError as err:
+                print(f"An error occurred: {err}")
+
+    @staticmethod
     async def update(state: FSMContext) -> NoReturn:
         employee = await state.get_data()
         prepared_data = await EmployeesService._prepare_employee_for_update(employee)
@@ -123,11 +137,22 @@ class EmployeesService:
                 print(f"An error occurred: {err}")
 
     @staticmethod
-    async def search(search_data: str, search_type: SearchType) -> List[Dict[str, str]]:
+    async def search(
+            search_data: str,
+            search_type: SearchType,
+            offset: int = 0
+    ) -> List[Dict[str, str]]:
         data = {search_type.value: search_data}
         async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
-                async with session.post(EmployeesService.API_SEARCH, json=data) as response:
+                async with session.post(
+                        url=EmployeesService.API_SEARCH,
+                        json=data,
+                        params={
+                            "limit": EmployeesService.LIMIT_EMPLOYEES_SEARCH,
+                            "offset": offset
+                        }
+                ) as response:
                     response.raise_for_status()
                     return await response.json()
             except ClientError as err:
