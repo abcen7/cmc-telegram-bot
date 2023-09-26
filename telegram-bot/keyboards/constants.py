@@ -24,6 +24,13 @@ class EmployeeSearchButtons(Enum):
     PROJECT_DATA = "employee_search_project"
 
 
+class EmployeeCardActionsButtons(Enum):
+    EDIT_TEXT = "[📝] Редактировать"
+    DELETE_TEXT = "[🗑️] Удалить"
+    EDIT_DATA = "employee_card_update"
+    DELETE_DATA = "employee_card_delete"
+
+
 OPTIONAL_FIELD = "🚫 Не указывать"
 DONT_UPDATE_FIELD = "🚫 Оставить текущее значение"
 STOP_FILLING = "🚫 Остановить заполнение"

@@ -6,19 +6,26 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import CallbackQuery
 
-import services
 from config import TEMP_STATIC_PATH
-from handlers.constants import EmployeeCreateMessages, EmployeeAskDataMessages, EmployeeUpdateMessages
-from keyboards.executor import executor_cb, get_optional_field_keyboard, get_stop_filling_keyboard, get_main_keyboard, \
-    get_dont_update_field_keyboard, get_optional_and_dont_update_keyboard
 from main import bot, dp
+from services import EmployeesService
+
+from handlers.constants import \
+    EmployeeAskDataMessages, \
+    EmployeeUpdateMessages
+
+from keyboards.executor import \
+    executor_cb, \
+    get_stop_filling_keyboard, \
+    get_main_keyboard, \
+    get_dont_update_field_keyboard, \
+    get_optional_and_dont_update_keyboard, employee_cb
 
 from keyboards.constants import \
-    EMPLOYEE_ADD_DATA, \
     STOP_FILLING, \
     OPTIONAL_FIELD, \
-    EMPLOYEE_UPDATE_DATA
-from services import EmployeesService
+    EMPLOYEE_UPDATE_DATA, \
+    EmployeeCardActionsButtons
 
 
 class UpdateEmployee(StatesGroup):
@@ -64,6 +71,29 @@ async def stop_filling(message: types.Message, state: FSMContext):
         EmployeeUpdateMessages.STOPPED.value,
         reply_markup=get_main_keyboard()
     )
+
+
+# UpdateEmployee from search keyboard handler
+@dp.callback_query_handler(employee_cb.filter(action=EmployeeCardActionsButtons.EDIT_DATA.value))
+async def process_update_employee_callback(call: CallbackQuery, callback_data, state: FSMContext) -> None:
+    await bot.send_message(
+        call.from_user.id,
+        EmployeeUpdateMessages.UPDATE.value
+    )
+    employee_id = callback_data["employee_id"]
+    if await EmployeesService.is_employee_exist(employee_id):
+        await state.update_data(id=employee_id)
+        await bot.send_message(
+            call.from_user.id,
+            EmployeeAskDataMessages.NAME.value,
+            reply_markup=get_dont_update_field_keyboard()
+        )
+        await UpdateEmployee.name.set()
+    else:
+        await bot.send_message(
+            call.from_user.id,
+            EmployeeUpdateMessages.INVALID_ID.value
+        )
 
 
 @dp.message_handler(state=UpdateEmployee.id)

@@ -5,9 +5,11 @@ from aiogram import types
 from aiogram.types import ParseMode
 
 from handlers.constants import SearchResultMessages, API_TO_RESULT, NEW_LINE, AVATAR_PATH, CREATED, ID
+from keyboards.executor import get_employee_card_actions_keyboard
 from services import EmployeesService
 
 
+# TODO: refactor to class builder
 async def get_result_or_failed(
         employees: List[Dict[str, str]],
         message: types.Message,
@@ -35,5 +37,6 @@ async def get_result_or_failed(
             await message.answer(
                 NEW_LINE.join(employee_card),
                 parse_mode=ParseMode.HTML,
-                disable_web_page_preview=False
+                disable_web_page_preview=False,
+                reply_markup=get_employee_card_actions_keyboard(employee[ID])
             )

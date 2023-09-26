@@ -6,14 +6,18 @@ from aiogram.types import \
 
 from aiogram.utils.callback_data import CallbackData
 
-from handlers.constants import UserSearchMessages
 from keyboards.constants import \
     COMMANDS_MESSAGE, \
     EMPLOYEE_ADD_TEXT, \
     EMPLOYEE_DELETE_TEXT, \
     EMPLOYEE_SEARCH_TEXT, \
     OPTIONAL_FIELD, \
-    STOP_FILLING, EMPLOYEE_UPDATE_TEXT, EMPLOYEE_UPDATE_DATA, DONT_UPDATE_FIELD, EmployeeSearchButtons
+    STOP_FILLING, \
+    EMPLOYEE_UPDATE_TEXT, \
+    EMPLOYEE_UPDATE_DATA, \
+    DONT_UPDATE_FIELD, \
+    EmployeeSearchButtons, \
+    EmployeeCardActionsButtons
 
 from keyboards.constants import \
     EMPLOYEE_ADD_DATA, \
@@ -21,6 +25,7 @@ from keyboards.constants import \
     EMPLOYEE_SEARCH_DATA
 
 executor_cb = CallbackData("executor", "action")
+employee_cb = CallbackData("employee", "employee_id", "action")
 
 
 def get_main_keyboard() -> ReplyKeyboardMarkup:
@@ -91,6 +96,31 @@ def get_dont_update_field_keyboard() -> InlineKeyboardMarkup:
 def get_stop_filling_keyboard() -> InlineKeyboardMarkup:
     return ReplyKeyboardMarkup(resize_keyboard=True).add(
         KeyboardButton(STOP_FILLING)
+    )
+
+
+def get_employee_card_actions_keyboard(employee_id) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text=EmployeeCardActionsButtons.EDIT_TEXT.value,
+                    callback_data=employee_cb.new(
+                        action=EmployeeCardActionsButtons.EDIT_DATA.value,
+                        employee_id=employee_id
+                    ),
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=EmployeeCardActionsButtons.DELETE_TEXT.value,
+                    callback_data=employee_cb.new(
+                        action=EmployeeCardActionsButtons.DELETE_DATA.value,
+                        employee_id=employee_id
+                    ),
+                )
+            ],
+        ],
     )
 
 

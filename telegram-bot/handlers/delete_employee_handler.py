@@ -5,8 +5,9 @@ from aiogram.types import CallbackQuery
 
 from handlers import EmployeeAskDataMessages
 from handlers.constants import EmployeeDeleteMessages, EmployeeUpdateMessages
-from keyboards.constants import EMPLOYEE_REMOVE_DATA, STOP_FILLING
-from keyboards.executor import executor_cb, get_stop_filling_keyboard, get_main_keyboard
+from keyboards.constants import EMPLOYEE_REMOVE_DATA, STOP_FILLING, EmployeeCardActionsButtons
+from keyboards.executor import executor_cb, get_stop_filling_keyboard, get_main_keyboard, employee_cb, \
+    get_dont_update_field_keyboard
 from main import dp, bot
 from services import EmployeesService
 
@@ -14,6 +15,29 @@ from services import EmployeesService
 class DeleteEmployee(StatesGroup):
     id = State()
     is_verified = State()
+
+
+# DeleteEmployee from search keyboard handler
+@dp.callback_query_handler(employee_cb.filter(action=EmployeeCardActionsButtons.DELETE_DATA.value))
+async def process_update_employee_callback(call: CallbackQuery, callback_data, state: FSMContext) -> None:
+    await bot.send_message(
+        call.from_user.id,
+        EmployeeDeleteMessages.DELETE.value
+    )
+    employee_id = callback_data["employee_id"]
+    if await EmployeesService.is_employee_exist(employee_id):
+        await state.update_data(id=employee_id)
+        await bot.send_message(
+            call.from_user.id,
+            EmployeeDeleteMessages.IS_VERIFIED.value,
+            reply_markup=get_stop_filling_keyboard()
+        )
+        await DeleteEmployee.is_verified.set()
+    else:
+        await call.answer(
+            call.from_user.id,
+            EmployeeDeleteMessages.INVALID_ID.value
+        )
 
 
 @dp.callback_query_handler(executor_cb.filter(action=EMPLOYEE_REMOVE_DATA))
