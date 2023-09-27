@@ -1,19 +1,19 @@
-from typing import List
 from bson import ObjectId
-from motor.motor_asyncio import AsyncIOMotorCollection
 
 from .models import User
 from database import Users
 
 from .dependencies import is_document_found
-from base import BaseRepository
 
 
-class UsersRepository(BaseRepository):
+class UsersRepository:
     object_model = User
 
-    def __init__(self):
-        super().__init__(Users)
+    def __init__(self) -> None:
+        self.collection = Users
+
+    async def is_user_exist(self, telegram_id: int) -> object_model:
+        return (await self.collection.find_one({"telegram_id": telegram_id})) is not None
 
     async def create(self, object_create: dict) -> object_model:
         await self.collection.insert_one(object_create)

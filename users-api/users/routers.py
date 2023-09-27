@@ -15,4 +15,4 @@ async def create_user(
         user: User,
         users_service: UsersService = Depends(),
 ) -> User:
-    return await users_service.create(user.dict(exclude_unset=True))
+    return await users_service.create(user)
