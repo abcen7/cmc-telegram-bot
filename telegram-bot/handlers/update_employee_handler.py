@@ -25,7 +25,7 @@ from keyboards.constants import \
     STOP_FILLING_FIELD, \
     OPTIONAL_FIELD, \
     EmployeeCardActionsButtons, \
-    EmployeeMainButtons
+    EmployeeMainButtons, DONT_UPDATE_FIELD
 
 
 class UpdateEmployee(StatesGroup):
@@ -171,8 +171,10 @@ async def process_avatar(message: types.Message, state: FSMContext):
         full_file_path = Path(TEMP_STATIC_PATH) / filename
         await bot.download_file_by_id(file_id, full_file_path)
         await state.update_data(avatar_path=full_file_path)
+    elif message.text == DONT_UPDATE_FIELD or message.text == OPTIONAL_FIELD:
+        await state.update_data(avatar_path=message.text)
     else:
-        await state.update_data(avatar_path=OPTIONAL_FIELD)
+        await state.update_data(avatar_path=DONT_UPDATE_FIELD)
     await message.answer(
         EmployeeUpdateMessages.SUCCESS.value,
         reply_markup=get_main_keyboard()

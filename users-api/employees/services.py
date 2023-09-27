@@ -38,6 +38,7 @@ class EmployeesService:
         return await self.repository.delete(object_id)
 
     async def update(self, employee_id: str, params_for_update: UpdateEmployee) -> object_model:
+        print(params_for_update, employee_id)
         return await self.repository.update(
             employee_id,
             params_for_update.model_dump(exclude_none=True)

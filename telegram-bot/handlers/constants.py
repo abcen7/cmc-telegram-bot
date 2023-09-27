@@ -71,8 +71,14 @@ class EmployeeSearchMessages(Enum):
     ASK = "[💬] Введите данные: "
     LIST_COMMANDS = "[🔎] Бот умеет искать по 4 характеристикам: имя, фамилия, проект, позиция на работе:"
 
+class EmployeeKeysData(Enum):
+    ID = '_id'
+    AVATAR_PATH = 'avatar_path'
+    CREATED = 'created'
+
 
 DELETE_VERIFIED_YES = 'да'
+NEW_LINE = "\n"
 
 API_TO_RESULT = {
     'name': '<b>Имя</b>: ',
@@ -82,7 +88,4 @@ API_TO_RESULT = {
     'project': '<b>Проект</b>: '
 }
 
-NEW_LINE = "\n"
-AVATAR_PATH = 'avatar_path'
-CREATED = 'created'
-ID = '_id'
+

@@ -28,10 +28,7 @@ class EmployeesService:
 
         if EmployeesService.AVATAR_PATH in result:
             result[EmployeesService.AVATAR_PATH] = await EmployeesService._upload_file(
-                str(
-                    result[EmployeesService.AVATAR_PATH]
-                )
-            )
+                str(result[EmployeesService.AVATAR_PATH]))
 
         return result
 
@@ -39,10 +36,12 @@ class EmployeesService:
     async def _prepare_employee_for_update(data: Dict[str, str]) -> Dict[str, str]:
         result = {}
         for key in data:
-            if data[key] != OPTIONAL_FIELD and data[key] != DONT_UPDATE_FIELD:
-                result[key] = data[key]
-
-        if EmployeesService.AVATAR_PATH in result:
+            if data[key] != DONT_UPDATE_FIELD:
+                if data[key] != OPTIONAL_FIELD:
+                    result[key] = data[key]
+                else:
+                    result[key] = ""
+        if EmployeesService.AVATAR_PATH in result and result[EmployeesService.AVATAR_PATH]:
             result[EmployeesService.AVATAR_PATH] = await EmployeesService._upload_file(
                 str(
                     result[EmployeesService.AVATAR_PATH]
@@ -61,7 +60,6 @@ class EmployeesService:
                 try:
                     async with session.post(EmployeesService.API_UPLOAD_FILE, data=form) as response:
                         if response.status == 200:
-                            print("Файл успешно загружен")
                             response_json = await response.json()
                             os.remove(path_to_file)
                             return response_json['filename']
@@ -87,7 +85,6 @@ class EmployeesService:
     async def new(state: FSMContext) -> NoReturn:
         employee = await state.get_data()
         prepared_data = await EmployeesService._prepare_employee_for_create(employee)
-        print(prepared_data)
         async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
                 async with session.post(EmployeesService.API_EMPLOYEES, json=prepared_data) as response:
@@ -122,7 +119,6 @@ class EmployeesService:
                     print(await response.json())
             except ClientError as err:
                 print(f"An error occurred: {err}")
-        print(employee_id, prepared_data)
 
     @staticmethod
     async def delete(employee_id: str) -> NoReturn:
