@@ -1,4 +1,3 @@
-import os.path
 import uuid
 from pathlib import Path
 
@@ -7,17 +6,24 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import CallbackQuery
 
-import services
 from config import TEMP_STATIC_PATH
-from handlers.constants import EmployeeCreateMessages, EmployeeAskDataMessages
-from handlers.default import process_commands_button
-from keyboards.executor import executor_cb, get_optional_field_keyboard, get_stop_filling_keyboard, get_main_keyboard
+from handlers.utils import generate_unique_filename
 from main import bot, dp
+from services import EmployeesService
+
+from handlers.constants import \
+    EmployeeCreateMessages, \
+    EmployeeAskDataMessages
+from keyboards.executor import \
+    executor_cb, \
+    get_optional_field_keyboard, \
+    get_stop_filling_keyboard, \
+    get_main_keyboard
 
 from keyboards.constants import \
-    EMPLOYEE_ADD_DATA, \
-    STOP_FILLING, OPTIONAL_FIELD
-from services import EmployeesService
+    STOP_FILLING_FIELD, \
+    OPTIONAL_FIELD, \
+    EmployeeMainButtons
 
 
 class FillEmployee(StatesGroup):
@@ -29,8 +35,8 @@ class FillEmployee(StatesGroup):
     avatar_path = State()
 
 
-@dp.callback_query_handler(executor_cb.filter(action=EMPLOYEE_ADD_DATA))
-async def process_add_user_callback(call: CallbackQuery, callback_data) -> None:
+@dp.callback_query_handler(executor_cb.filter(action=EmployeeMainButtons.ADD_DATA.value))
+async def process_add_user_callback(call: CallbackQuery) -> None:
     await bot.send_message(
         call.from_user.id,
         EmployeeCreateMessages.CREATE.value
@@ -55,7 +61,7 @@ async def process_add_user_command(message: types.Message):
     await FillEmployee.name.set()
 
 
-@dp.message_handler(lambda message: message.text == STOP_FILLING, state="*")
+@dp.message_handler(lambda message: message.text == STOP_FILLING_FIELD, state="*")
 async def stop_filling(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer(
@@ -118,13 +124,12 @@ async def process_avatar(message: types.Message, state: FSMContext):
     if message.content_type == str(types.ContentType.PHOTO):
         photo = message.photo[-1]
         file_id = photo.file_id
-        file_name = f'{str(uuid.uuid4())}.jpg'
-        full_file_path = Path(TEMP_STATIC_PATH) / file_name
+        filename = await generate_unique_filename()
+        full_file_path = Path(TEMP_STATIC_PATH) / filename
         await bot.download_file_by_id(file_id, full_file_path)
         await state.update_data(avatar_path=full_file_path)
     else:
         await state.update_data(avatar_path=OPTIONAL_FIELD)
-    print(await state.get_data())
     await message.answer(
         EmployeeCreateMessages.SUCCESS.value,
         reply_markup=get_main_keyboard()

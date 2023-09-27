@@ -3,13 +3,25 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import CallbackQuery
 
-from handlers import EmployeeAskDataMessages
-from handlers.constants import EmployeeDeleteMessages, EmployeeUpdateMessages
-from keyboards.constants import EMPLOYEE_REMOVE_DATA, STOP_FILLING, EmployeeCardActionsButtons
-from keyboards.executor import executor_cb, get_stop_filling_keyboard, get_main_keyboard, employee_cb, \
-    get_dont_update_field_keyboard
 from main import dp, bot
 from services import EmployeesService
+from handlers import EmployeeAskDataMessages
+
+from handlers.constants import \
+    EmployeeDeleteMessages, \
+    EmployeeUpdateMessages, \
+    DELETE_VERIFIED_YES
+
+from keyboards.constants import \
+    STOP_FILLING_FIELD, \
+    EmployeeCardActionsButtons, \
+    EmployeeMainButtons
+
+from keyboards.executor import \
+    executor_cb, \
+    get_stop_filling_keyboard, \
+    get_main_keyboard, \
+    employee_cb
 
 
 class DeleteEmployee(StatesGroup):
@@ -40,7 +52,7 @@ async def process_update_employee_callback(call: CallbackQuery, callback_data, s
         )
 
 
-@dp.callback_query_handler(executor_cb.filter(action=EMPLOYEE_REMOVE_DATA))
+@dp.callback_query_handler(executor_cb.filter(action=EmployeeMainButtons.DELETE_DATA.value))
 async def process_delete_employee_callback(call: CallbackQuery, callback_data) -> None:
     await bot.send_message(
         call.from_user.id,
@@ -66,7 +78,7 @@ async def process_delete_employee_command(message: types.Message):
     await DeleteEmployee.id.set()
 
 
-@dp.message_handler(lambda message: message.text == STOP_FILLING, state="*")
+@dp.message_handler(lambda message: message.text == STOP_FILLING_FIELD, state="*")
 async def stop_filling(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer(
@@ -93,7 +105,7 @@ async def process_id(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=DeleteEmployee.is_verified)
 async def process_delete_employee(message: types.Message, state: FSMContext):
-    solution = message.text.lower() == "да"
+    solution = message.text.lower() == DELETE_VERIFIED_YES
     if solution:
         await state.update_data(is_verified=True)
         await message.answer(

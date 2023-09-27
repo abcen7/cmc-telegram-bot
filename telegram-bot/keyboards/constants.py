@@ -2,15 +2,21 @@ from enum import Enum
 
 COMMANDS_MESSAGE = "🔑 Команды"
 
-EMPLOYEE_ADD_TEXT = "🆕 Создать карточку сотрудника"
-EMPLOYEE_UPDATE_TEXT = "✍️ Обновить карточку сотрудника"
-EMPLOYEE_DELETE_TEXT = "❌️ Удалить карточку сотрудника"
-EMPLOYEE_SEARCH_TEXT = "👀 Найти карточку сотрудника"
-
 EMPLOYEE_ADD_DATA = "employee_add"
 EMPLOYEE_UPDATE_DATA = "employee_update"
 EMPLOYEE_REMOVE_DATA = "employee_remove"
 EMPLOYEE_SEARCH_DATA = "employee_search"
+
+
+class EmployeeMainButtons(Enum):
+    ADD_TEXT = "🆕 Создать карточку сотрудника"
+    UPDATE_TEXT = "✍️ Обновить карточку сотрудника"
+    DELETE_TEXT = "❌️ Удалить карточку сотрудника"
+    SEARCH_TEXT = "👀 Найти карточку сотрудника"
+    ADD_DATA = "employee_add"
+    UPDATE_DATA = "employee_update"
+    DELETE_DATA = "employee_remove"
+    SEARCH_DATA = "employee_search"
 
 
 class EmployeeSearchButtons(Enum):
@@ -33,4 +39,4 @@ class EmployeeCardActionsButtons(Enum):
 
 OPTIONAL_FIELD = "🚫 Не указывать"
 DONT_UPDATE_FIELD = "🚫 Оставить текущее значение"
-STOP_FILLING = "🚫 Остановить заполнение"
+STOP_FILLING_FIELD = "🚫 Остановить заполнение"

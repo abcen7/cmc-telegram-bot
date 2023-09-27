@@ -1,4 +1,3 @@
-import uuid
 from pathlib import Path
 
 from aiogram import types
@@ -7,6 +6,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import CallbackQuery
 
 from config import TEMP_STATIC_PATH
+from handlers import generate_unique_filename
 from main import bot, dp
 from services import EmployeesService
 
@@ -22,10 +22,10 @@ from keyboards.executor import \
     get_optional_and_dont_update_keyboard, employee_cb
 
 from keyboards.constants import \
-    STOP_FILLING, \
+    STOP_FILLING_FIELD, \
     OPTIONAL_FIELD, \
-    EMPLOYEE_UPDATE_DATA, \
-    EmployeeCardActionsButtons
+    EmployeeCardActionsButtons, \
+    EmployeeMainButtons
 
 
 class UpdateEmployee(StatesGroup):
@@ -38,8 +38,8 @@ class UpdateEmployee(StatesGroup):
     avatar_path = State()
 
 
-@dp.callback_query_handler(executor_cb.filter(action=EMPLOYEE_UPDATE_DATA))
-async def process_update_employee_callback(call: CallbackQuery, callback_data) -> None:
+@dp.callback_query_handler(executor_cb.filter(action=EmployeeMainButtons.UPDATE_DATA.value))
+async def process_update_employee_callback(call: CallbackQuery) -> None:
     await bot.send_message(
         call.from_user.id,
         EmployeeUpdateMessages.UPDATE.value
@@ -64,7 +64,7 @@ async def process_update_employee_command(message: types.Message):
     await UpdateEmployee.id.set()
 
 
-@dp.message_handler(lambda message: message.text == STOP_FILLING, state="*")
+@dp.message_handler(lambda message: message.text == STOP_FILLING_FIELD, state="*")
 async def stop_filling(message: types.Message, state: FSMContext):
     await state.finish()
     await message.answer(
@@ -167,8 +167,8 @@ async def process_avatar(message: types.Message, state: FSMContext):
     if message.content_type == str(types.ContentType.PHOTO):
         photo = message.photo[-1]
         file_id = photo.file_id
-        file_name = f'{str(uuid.uuid4())}.jpg'
-        full_file_path = Path(TEMP_STATIC_PATH) / file_name
+        filename = await generate_unique_filename()
+        full_file_path = Path(TEMP_STATIC_PATH) / filename
         await bot.download_file_by_id(file_id, full_file_path)
         await state.update_data(avatar_path=full_file_path)
     else:

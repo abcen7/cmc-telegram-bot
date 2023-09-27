@@ -1,8 +1,9 @@
 import datetime
+import uuid
 from typing import Dict, List, NoReturn
 
 from aiogram import types
-from aiogram.types import ParseMode, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ParseMode
 
 import config
 from handlers.constants import \
@@ -12,8 +13,8 @@ from handlers.constants import \
     AVATAR_PATH, \
     CREATED, \
     ID, \
-    UserSearchMessages
-from keyboards.executor import get_employee_card_actions_keyboard, get_employees_list_keyboard
+    EmployeeSearchMessages
+from keyboards.executor import get_employees_list_keyboard
 from services import EmployeesService
 
 
@@ -47,6 +48,10 @@ async def get_result_or_failed(
         )
     else:
         await message.answer(
-            UserSearchMessages.LIST_EMPLOYEES.value,
+            EmployeeSearchMessages.LIST_EMPLOYEES.value,
             reply_markup=await get_employees_list_keyboard(employees)
         )
+
+
+async def generate_unique_filename() -> str:
+    return f'{str(uuid.uuid4())}.jpg'

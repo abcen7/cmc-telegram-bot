@@ -14,9 +14,14 @@ from handlers.constants import \
 from keyboards.constants import \
     COMMANDS_MESSAGE
 
+from services.users import \
+    UsersService
+
 
 @dp.message_handler(commands=["start"])
 async def start_message(message: types.Message) -> None:
+    user_id = message.from_user.id
+    await UsersService.new(user_id)
     await message.answer(
         WELCOME_MESSAGE,
         reply_markup=get_main_keyboard()
