@@ -20,7 +20,7 @@ async def create_user(
 
 
 @users_router.patch("/users/{telegram_id}",
-                    status_code=status.HTTP_201_CREATED,
+                    status_code=status.HTTP_200_OK,
                     response_model=User)
 async def update_user(
         telegram_id: int,
@@ -28,3 +28,13 @@ async def update_user(
         users_service: UsersService = Depends(),
 ) -> User:
     return await users_service.update(telegram_id, params_for_update)
+
+
+@users_router.get("/users/{telegram_id}",
+                  status_code=status.HTTP_200_OK,
+                  response_model=User)
+async def get_user(
+        telegram_id: int,
+        users_service: UsersService = Depends(),
+) -> User:
+    return await users_service.get_one(telegram_id)

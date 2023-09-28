@@ -23,6 +23,7 @@ from keyboards.executor import \
     get_search_keyboard, \
     get_main_keyboard, \
     get_employee_card_actions_keyboard
+from services.users import UsersService
 
 
 class SearchEmployee(StatesGroup):
@@ -173,10 +174,13 @@ async def process_search_employee_by_project(message: types.Message, state: FSMC
 async def process_view_employee_card(callback_data: CallbackQuery) -> None:
     employee_id = callback_data.data.replace('employee_info_', '')
     employee_from_api = await EmployeesService.get_one(employee_id)
+    keyboard = None
+    if await UsersService.is_user_admin(callback_data.from_user.id):
+        keyboard = get_employee_card_actions_keyboard(employee_id)
     await bot.send_message(
         chat_id=callback_data.from_user.id,
         text=await get_employee_card(employee_from_api),
         parse_mode=ParseMode.HTML,
         disable_web_page_preview=False,
-        reply_markup=get_employee_card_actions_keyboard(employee_id)
+        reply_markup=keyboard
     )

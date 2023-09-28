@@ -24,6 +24,7 @@ class UserRoles(Enum):
 
 class UserRolesMessages(Enum):
     CHANGED = "Роль была успешно изменена!"
+    NOT_PERMITTED = "У Вас недостаточно прав для использования этой команды!"
 
 
 class EmployeeAskDataMessages(Enum):

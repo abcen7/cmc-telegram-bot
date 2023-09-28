@@ -16,6 +16,7 @@ from keyboards.constants import \
     EmployeeSearchButtons, \
     EmployeeCardActionsButtons, \
     EmployeeMainButtons
+from services.users import UsersService
 
 executor_cb = CallbackData("executor", "action")
 employee_cb = CallbackData("employee", "employee_id", "action")
@@ -27,9 +28,19 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
     )
 
 
-def get_commands_keyboard() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
+async def get_commands_keyboard(telegram_id: int) -> InlineKeyboardMarkup:
+    buttons = [
+        [
+            InlineKeyboardButton(
+                text=EmployeeMainButtons.SEARCH_TEXT.value,
+                callback_data=executor_cb.new(
+                    action=EmployeeMainButtons.SEARCH_DATA.value
+                ),
+            )
+        ]
+    ]
+    if await UsersService.is_user_admin(telegram_id):
+        buttons += [
             [
                 InlineKeyboardButton(
                     text=EmployeeMainButtons.ADD_TEXT.value,
@@ -54,16 +65,9 @@ def get_commands_keyboard() -> InlineKeyboardMarkup:
                     ),
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    text=EmployeeMainButtons.SEARCH_TEXT.value,
-                    callback_data=executor_cb.new(
-                        action=EmployeeMainButtons.SEARCH_DATA.value
-                    ),
-                )
-            ],
-        ],
-    )
+        ]
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 def get_optional_and_dont_update_keyboard() -> InlineKeyboardMarkup:

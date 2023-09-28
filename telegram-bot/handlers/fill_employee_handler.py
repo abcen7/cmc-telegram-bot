@@ -13,7 +13,7 @@ from services import EmployeesService
 
 from handlers.constants import \
     EmployeeCreateMessages, \
-    EmployeeAskDataMessages
+    EmployeeAskDataMessages, UserRolesMessages
 from keyboards.executor import \
     executor_cb, \
     get_optional_field_keyboard, \
@@ -24,6 +24,7 @@ from keyboards.constants import \
     STOP_FILLING_FIELD, \
     OPTIONAL_FIELD, \
     EmployeeMainButtons
+from services.users import UsersService
 
 
 class FillEmployee(StatesGroup):
@@ -37,6 +38,11 @@ class FillEmployee(StatesGroup):
 
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeMainButtons.ADD_DATA.value))
 async def process_add_user_callback(call: CallbackQuery) -> None:
+    if not await UsersService.is_user_admin(call.from_user.id):
+        await call.answer(
+            UserRolesMessages.NOT_PERMITTED.value
+        )
+        return
     await bot.send_message(
         call.from_user.id,
         EmployeeCreateMessages.CREATE.value
@@ -51,6 +57,11 @@ async def process_add_user_callback(call: CallbackQuery) -> None:
 
 @dp.message_handler(commands=["employee_add"])
 async def process_add_user_command(message: types.Message):
+    if not await UsersService.is_user_admin(message.from_user.id):
+        await message.answer(
+            UserRolesMessages.NOT_PERMITTED.value
+        )
+        return
     await message.answer(
         EmployeeCreateMessages.CREATE.value
     )

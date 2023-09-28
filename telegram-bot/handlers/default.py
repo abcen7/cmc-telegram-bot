@@ -41,5 +41,5 @@ async def help_message(message: types.Message) -> None:
 async def process_commands_button(message: types.Message):
     await message.answer(
         "Активный список команд:",
-        reply_markup=get_commands_keyboard()
+        reply_markup=await get_commands_keyboard(message.from_user.id)
     )
