@@ -17,7 +17,6 @@ from keyboards.executor import get_employees_list_keyboard
 from services import EmployeesService
 
 
-# TODO: refactor to class builder
 async def get_employee_card(employee: Dict[str, str]) -> str:
     employee_card = []
     for key, value in employee.items():

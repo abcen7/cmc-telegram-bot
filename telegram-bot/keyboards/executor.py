@@ -161,10 +161,9 @@ async def get_employees_list_keyboard(employees: List[Dict[str, str]]) -> Inline
     for employee in employees:
         buttons.append(
             [
-                # TODO Refactor
                 InlineKeyboardButton(
                     f"...{employee['_id'][-5:]} {employee['name']} {employee['surname']} {employee['project']}",
-                    callback_data=f"employee_info_{employee['_id']}"  # TODO Change
+                    callback_data=f"employee_info_{employee['_id']}"
                 )
             ]
         )

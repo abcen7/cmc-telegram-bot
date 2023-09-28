@@ -6,6 +6,7 @@ from aiohttp import \
     TCPConnector
 
 from config import API_URL
+from handlers.constants import UserRoles
 
 
 class UsersService:
@@ -21,3 +22,14 @@ class UsersService:
                     response.raise_for_status()
             except ClientError as err:
                 print(f"User is already exists... {err}")
+
+    @staticmethod
+    async def change_role(telegram_id: int, role: str) -> NoReturn:
+        async with ClientSession(connector=TCPConnector(verify_ssl=False)) as session:
+            try:
+                async with session.patch(UsersService.API_USERS + f'/{telegram_id}', json={
+                    "is_admin": role == UserRoles.ADMIN.value
+                }) as response:
+                    response.raise_for_status()
+            except ClientError as err:
+                print(f"Can't change the role {err}")

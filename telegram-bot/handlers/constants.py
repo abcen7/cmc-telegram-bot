@@ -17,6 +17,15 @@ HELP_MESSAGE = """
 """
 
 
+class UserRoles(Enum):
+    USER = "user"
+    ADMIN = "admin"
+
+
+class UserRolesMessages(Enum):
+    CHANGED = "Роль была успешно изменена!"
+
+
 class EmployeeAskDataMessages(Enum):
     ID = "💬 Введите уникальный идентификатор сотрудника"
     NAME = "💬 Введите имя"
@@ -71,6 +80,7 @@ class EmployeeSearchMessages(Enum):
     ASK = "[💬] Введите данные: "
     LIST_COMMANDS = "[🔎] Бот умеет искать по 4 характеристикам: имя, фамилия, проект, позиция на работе:"
 
+
 class EmployeeKeysData(Enum):
     ID = '_id'
     AVATAR_PATH = 'avatar_path'
@@ -87,5 +97,3 @@ API_TO_RESULT = {
     'job_title': '<b>Должность</b>: ',
     'project': '<b>Проект</b>: '
 }
-
-
