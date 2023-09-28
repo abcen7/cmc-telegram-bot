@@ -93,6 +93,18 @@ class EmployeesService:
                 print(f"An error occurred: {err}")
 
     @staticmethod
+    async def get_all_job_titles() -> List[str]:
+        async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+            try:
+                async with session.get(
+                        EmployeesService.API_EMPLOYEES + f'/job_titles',
+                ) as response:
+                    response.raise_for_status()
+                    return await response.json()
+            except ClientError as err:
+                print(f"An error occurred: {err}")
+
+    @staticmethod
     async def get_one(employee_id: str) -> Dict[str, str]:
         async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:

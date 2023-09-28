@@ -2,11 +2,6 @@ from enum import Enum
 
 COMMANDS_MESSAGE = "🔑 Команды"
 
-EMPLOYEE_ADD_DATA = "employee_add"
-EMPLOYEE_UPDATE_DATA = "employee_update"
-EMPLOYEE_REMOVE_DATA = "employee_remove"
-EMPLOYEE_SEARCH_DATA = "employee_search"
-
 
 class EmployeeMainButtons(Enum):
     ADD_TEXT = "🆕 Создать карточку сотрудника"

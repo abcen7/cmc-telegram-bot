@@ -13,6 +13,9 @@ class EmployeesService:
     def __init__(self) -> None:
         self.repository = EmployeesRepository()
 
+    async def get_all_job_titles(self) -> List[str]:
+        return await self.repository.get_all_job_titles()
+
     async def find_many_within_search(
             self,
             params_for_search: SearchEmployee,

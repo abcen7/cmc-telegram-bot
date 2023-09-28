@@ -23,14 +23,14 @@ async def get_employee_card(employee: Dict[str, str]) -> str:
         match key:
             case EmployeeKeysData.ID.value:
                 employee_card.append(f'<b>ID: </b><pre>{employee[key]}</pre>')
+            case EmployeeKeysData.CREATED.value:
+                employee_card.append(f'<b>Дата прихода</b>: {datetime.datetime.fromtimestamp(value)}')
             case EmployeeKeysData.AVATAR_PATH.value:
                 if value:
                     avatar_file = await EmployeesService.get_file(employee[key])
                     if config.LOCAL_DEVELOPMENT:
                         avatar_file = avatar_file.replace('host.docker.internal', 'localhost')
                     employee_card.append(f'<a href="{avatar_file}">&#8205;</a>')
-            case EmployeeKeysData.CREATED.value:
-                employee_card.append(f'<b>Дата прихода</b>: {datetime.datetime.fromtimestamp(value)}')
             case _:
                 if key in API_TO_RESULT and value:
                     employee_card.append(str(API_TO_RESULT[key]) + str(employee[key]))

@@ -16,6 +16,7 @@ from keyboards.constants import \
     EmployeeSearchButtons, \
     EmployeeCardActionsButtons, \
     EmployeeMainButtons
+from services import EmployeesService
 from services.users import UsersService
 
 executor_cb = CallbackData("executor", "action")
@@ -168,6 +169,21 @@ async def get_employees_list_keyboard(employees: List[Dict[str, str]]) -> Inline
                 InlineKeyboardButton(
                     f"...{employee['_id'][-5:]} {employee['name']} {employee['surname']} {employee['project']}",
                     callback_data=f"employee_info_{employee['_id']}"
+                )
+            ]
+        )
+    return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
+
+
+async def get_job_titles_list_keyboard() -> InlineKeyboardMarkup:
+    job_titles = await EmployeesService.get_all_job_titles()
+    buttons = []
+    for job_title in job_titles:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    job_title,
+                    callback_data=f"employees_job_title_info_{job_title}"
                 )
             ]
         )

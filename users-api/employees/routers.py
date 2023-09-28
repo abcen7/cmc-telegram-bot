@@ -24,6 +24,17 @@ async def get_employees_within_search(
 
 
 @employees_router.get(
+    "/employees/job_titles",
+    status_code=status.HTTP_200_OK,
+)
+async def get_all_employees(
+        employees_service: EmployeesService = Depends(),
+) -> List[str]:
+    return await employees_service.get_all_job_titles()
+
+
+
+@employees_router.get(
     "/employees",
     status_code=status.HTTP_200_OK,
 )

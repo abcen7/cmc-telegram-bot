@@ -14,6 +14,14 @@ class EmployeesRepository:
     def __init__(self) -> None:
         self.collection = Employees
 
+    async def get_all_job_titles(self) -> List[str]:
+        job_titles = []
+        documents = [document async for document in self.collection.find({}, {"job_title": 1, "_id": 0})]
+        for document in documents:
+            job_titles.append(*list(document.values()))
+        job_titles = set(job_titles)
+        return list(job_titles)
+
     async def find_many_within_search(
             self,
             params_for_search: List[Dict[str, Dict[str, str]]],
