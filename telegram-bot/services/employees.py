@@ -15,6 +15,7 @@ class EmployeesService:
     API_UPLOAD_FILE = API_URL + '/upload_file'
     AVATAR_PATH = 'avatar_path'
     API_SEARCH = API_URL + '/search/employees'
+    API_SEARCH_TIME = API_URL + '/search/employees/time'
     API_GET_FILE = API_URL + '/file'
 
     LIMIT_EMPLOYEES_SEARCH = 20
@@ -144,17 +145,34 @@ class EmployeesService:
             except ClientError as err:
                 print(f"An error occurred: {err}")
 
+
+    @staticmethod
+    async def _prepare_data_for_search(search_data: str | tuple, search_type: SearchType) -> tuple:
+        data = None
+        api_url_search = None
+        if search_type == SearchType.PERIOD_OF_TIME:
+            print("YES")
+            data = {
+                "start_time": search_data[0],
+                "end_time": search_data[1]
+            }
+            api_url_search = EmployeesService.API_SEARCH_TIME
+        else:
+            data = {search_type.value: search_data}
+            api_url_search = EmployeesService.API_SEARCH
+        return data, api_url_search
+
     @staticmethod
     async def search(
-            search_data: str,
+            search_data: str | tuple,
             search_type: SearchType,
             offset: int = 0
     ) -> List[Dict[str, str]]:
-        data = {search_type.value: search_data}
+        data, api_url_search = await EmployeesService._prepare_data_for_search(search_data, search_type)
         async with ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             try:
                 async with session.post(
-                        url=EmployeesService.API_SEARCH,
+                        url=api_url_search,
                         json=data,
                         params={
                             "limit": EmployeesService.LIMIT_EMPLOYEES_SEARCH,

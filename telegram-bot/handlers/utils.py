@@ -56,3 +56,13 @@ async def get_result_or_failed(
 
 async def generate_unique_filename() -> str:
     return f'{str(uuid.uuid4())}.jpg'
+
+
+async def validate_period_of_time(period: str) -> tuple[int, int] | bool:
+    try:
+        start_date, end_date = period.split()
+        start_date_unix = int(datetime.datetime.strptime(start_date, '%Y-%m-%d-%H-%M').strftime("%s"))
+        end_date_unix = int(datetime.datetime.strptime(end_date, '%Y-%m-%d-%H-%M').strftime("%s"))
+        return start_date_unix, end_date_unix
+    except BaseException:
+        return False

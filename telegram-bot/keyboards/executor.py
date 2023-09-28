@@ -157,6 +157,22 @@ def get_search_keyboard() -> InlineKeyboardMarkup:
                     ),
                 )
             ],
+            [
+                InlineKeyboardButton(
+                    text=EmployeeSearchButtons.PATRONYMIC_TEXT.value,
+                    callback_data=executor_cb.new(
+                        action=EmployeeSearchButtons.PATRONYMIC_DATA.value
+                    ),
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=EmployeeSearchButtons.PERIOD_OF_TIME_TEXT.value,
+                    callback_data=executor_cb.new(
+                        action=EmployeeSearchButtons.PERIOD_OF_TIME_DATA.value
+                    ),
+                )
+            ]
         ],
     )
 

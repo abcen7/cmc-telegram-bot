@@ -28,6 +28,19 @@ class EmployeesService:
             limit
         )
 
+    async def find_many_within_search_time(
+            self,
+            params_for_search: SearchEmployee,
+            offset: int,
+            limit: int
+    ) -> List[object_model]:
+        return await self.repository.find_many_within_search_time(
+            params_for_search.start_time,
+            params_for_search.end_time,
+            offset,
+            limit
+        )
+
     async def get_all(self, limit: int = 20) -> List[object_model]:
         return await self.repository.get_all(limit)
 

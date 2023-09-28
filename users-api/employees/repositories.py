@@ -35,6 +35,23 @@ class EmployeesRepository:
             .limit(limit)
         ]
 
+    async def find_many_within_search_time(
+            self,
+            start_time: int,
+            end_time: int,
+            offset: int,
+            limit: int
+    ) -> List[object_model]:
+        return [
+            document async for document in
+            self.collection.find({"created": {
+                '$gte': start_time,
+                '$lt': end_time
+            }})
+            .skip(offset)
+            .limit(limit)
+        ]
+
     async def get_all(self, limit) -> List[object_model]:
         return [document async for document in self.collection.find({}).limit(limit)]
 

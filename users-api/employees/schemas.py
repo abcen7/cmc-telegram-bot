@@ -27,3 +27,5 @@ class SearchEmployee(BaseModelWithConfig):
     surname: Optional[str] = Field(default=None)
     job_title: Optional[str] = Field(default=None)
     project: Optional[str] = Field(default=None)
+    start_time: Optional[int] = Field(default=None)
+    end_time: Optional[int] = Field(default=None)
