@@ -57,6 +57,9 @@ async def process_search_employee_command(message: types.Message):
     )
 
 
+"""Поиск по имени сотрудника"""
+
+
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.NAME_DATA.value))
 async def process_search_employee_name_callback(call: CallbackQuery) -> None:
     await bot.send_message(
@@ -69,9 +72,6 @@ async def process_search_employee_name_callback(call: CallbackQuery) -> None:
 
 @dp.message_handler(commands=["search_employee_name"])
 async def search_employee_by_name(message: types.Message) -> None:
-    """
-    Поиск по имени сотрудника
-    """
     await message.answer(
         EmployeeSearchMessages.ASK.value,
         reply_markup=get_main_keyboard()
@@ -87,11 +87,11 @@ async def process_search_employee_by_name(message: types.Message, state: FSMCont
     await state.finish()
 
 
+"""Поиск по фамилии сотрудника"""
+
+
 @dp.message_handler(commands=["search_employee_surname"])
 async def search_employee_by_surname(message: types.Message) -> None:
-    """
-    Поиск по фамилии сотрудника
-    """
     await message.answer(
         EmployeeSearchMessages.ASK.value,
         reply_markup=get_main_keyboard()
@@ -117,6 +117,9 @@ async def process_search_employee_by_surname(message: types.Message, state: FSMC
     await state.finish()
 
 
+"""Поиск по должности сотрудника"""
+
+
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.JOB_TITLE_DATA.value))
 async def process_search_employee_job_title_callback(call: CallbackQuery) -> None:
     await bot.send_message(
@@ -128,7 +131,6 @@ async def process_search_employee_job_title_callback(call: CallbackQuery) -> Non
 
 @dp.message_handler(commands=["search_employee_job_title"])
 async def search_employee_by_job_title(message: types.Message) -> None:
-    """Поиск по должности сотрудника по команде"""
     await message.answer(
         EmployeeSearchMessages.LIST_JOB_TITLES.value,
         reply_markup=await get_job_titles_list_keyboard()
@@ -137,17 +139,16 @@ async def search_employee_by_job_title(message: types.Message) -> None:
 
 @dp.callback_query_handler(lambda c: c.data.startswith('employees_job_title_info_'))
 async def process_search_employee_job_title_callback(call: CallbackQuery) -> None:
-    """Получение списка пользователей по их должности"""
     employee_job_title = call.data.replace('employees_job_title_info_', '')
     api_result = await EmployeesService.search(employee_job_title, SearchType.JOB_TITLE)
     await get_result_or_failed(api_result, call.message)
 
 
+"""Поиск по проекту сотрудника"""
+
+
 @dp.message_handler(commands=["search_employee_project"])
 async def search_employee_by_project(message: types.Message) -> None:
-    """
-    Поиск по проекту сотрудника
-    """
     await message.answer(
         EmployeeSearchMessages.ASK.value,
         reply_markup=get_main_keyboard()
@@ -156,7 +157,7 @@ async def search_employee_by_project(message: types.Message) -> None:
 
 
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.PROJECT_DATA.value))
-async def process_search_employee_surname_callback(call: CallbackQuery) -> None:
+async def process_search_employee_project_callback(call: CallbackQuery) -> None:
     await bot.send_message(
         call.from_user.id,
         EmployeeSearchMessages.ASK.value,

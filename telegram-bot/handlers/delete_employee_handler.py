@@ -3,9 +3,15 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import CallbackQuery
 
-from main import dp, bot
-from services import EmployeesService
 from handlers import EmployeeAskDataMessages
+
+from main import \
+    dp, \
+    bot
+
+from services import \
+    EmployeesService, \
+    UsersService
 
 from handlers.constants import \
     EmployeeDeleteMessages, \
@@ -23,7 +29,6 @@ from keyboards.executor import \
     get_stop_filling_keyboard, \
     get_main_keyboard, \
     employee_cb
-from services.users import UsersService
 
 
 class DeleteEmployee(StatesGroup):

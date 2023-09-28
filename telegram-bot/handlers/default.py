@@ -14,7 +14,7 @@ from handlers.constants import \
 from keyboards.constants import \
     COMMANDS_MESSAGE
 
-from services.users import \
+from services import \
     UsersService
 
 
