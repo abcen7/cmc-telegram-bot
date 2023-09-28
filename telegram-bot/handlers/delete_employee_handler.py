@@ -10,7 +10,8 @@ from handlers import EmployeeAskDataMessages
 from handlers.constants import \
     EmployeeDeleteMessages, \
     EmployeeUpdateMessages, \
-    DELETE_VERIFIED_YES
+    DELETE_VERIFIED_YES, \
+    UserRolesMessages
 
 from keyboards.constants import \
     STOP_FILLING_FIELD, \
@@ -22,6 +23,7 @@ from keyboards.executor import \
     get_stop_filling_keyboard, \
     get_main_keyboard, \
     employee_cb
+from services.users import UsersService
 
 
 class DeleteEmployee(StatesGroup):
@@ -31,7 +33,12 @@ class DeleteEmployee(StatesGroup):
 
 # DeleteEmployee from search keyboard handler
 @dp.callback_query_handler(employee_cb.filter(action=EmployeeCardActionsButtons.DELETE_DATA.value))
-async def process_update_employee_callback(call: CallbackQuery, callback_data, state: FSMContext) -> None:
+async def process_delete_employee_inline_callback(call: CallbackQuery, callback_data, state: FSMContext) -> None:
+    if not await UsersService.is_user_admin(call.from_user.id):
+        await call.answer(
+            UserRolesMessages.NOT_PERMITTED.value
+        )
+        return
     await bot.send_message(
         call.from_user.id,
         EmployeeDeleteMessages.DELETE.value
@@ -54,6 +61,11 @@ async def process_update_employee_callback(call: CallbackQuery, callback_data, s
 
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeMainButtons.DELETE_DATA.value))
 async def process_delete_employee_callback(call: CallbackQuery, callback_data) -> None:
+    if not await UsersService.is_user_admin(call.from_user.id):
+        await call.answer(
+            UserRolesMessages.NOT_PERMITTED.value
+        )
+        return
     await bot.send_message(
         call.from_user.id,
         EmployeeDeleteMessages.DELETE.value
@@ -68,6 +80,11 @@ async def process_delete_employee_callback(call: CallbackQuery, callback_data) -
 
 @dp.message_handler(commands=["employee_delete"])
 async def process_delete_employee_command(message: types.Message):
+    if not await UsersService.is_user_admin(message.from_user.id):
+        await message.answer(
+            UserRolesMessages.NOT_PERMITTED.value
+        )
+        return
     await message.answer(
         EmployeeDeleteMessages.DELETE.value
     )

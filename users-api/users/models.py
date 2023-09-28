@@ -9,6 +9,7 @@ from .utils import get_current_time_in_unix_format
 class User(BaseModelWithConfig):
     id: Optional[str] = Field(alias="_id", default=None)
     telegram_id: int = Field()
+    is_admin: bool = Field(default=False)
     created: Optional[float] = Field(default=None, validate_default=True)
     updated: Optional[float] = Field(default=None, validate_default=True)
 

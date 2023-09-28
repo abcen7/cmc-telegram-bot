@@ -12,7 +12,7 @@ from services import EmployeesService
 
 from handlers.constants import \
     EmployeeAskDataMessages, \
-    EmployeeUpdateMessages
+    EmployeeUpdateMessages, UserRoles, UserRolesMessages
 
 from keyboards.executor import \
     executor_cb, \
@@ -25,7 +25,8 @@ from keyboards.constants import \
     STOP_FILLING_FIELD, \
     OPTIONAL_FIELD, \
     EmployeeCardActionsButtons, \
-    EmployeeMainButtons
+    EmployeeMainButtons, DONT_UPDATE_FIELD
+from services.users import UsersService
 
 
 class UpdateEmployee(StatesGroup):
@@ -40,6 +41,11 @@ class UpdateEmployee(StatesGroup):
 
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeMainButtons.UPDATE_DATA.value))
 async def process_update_employee_callback(call: CallbackQuery) -> None:
+    if not await UsersService.is_user_admin(call.from_user.id):
+        await call.answer(
+            UserRolesMessages.NOT_PERMITTED.value
+        )
+        return
     await bot.send_message(
         call.from_user.id,
         EmployeeUpdateMessages.UPDATE.value
@@ -54,6 +60,11 @@ async def process_update_employee_callback(call: CallbackQuery) -> None:
 
 @dp.message_handler(commands=["employee_update"])
 async def process_update_employee_command(message: types.Message):
+    if not await UsersService.is_user_admin(message.from_user.id):
+        await message.answer(
+            UserRolesMessages.NOT_PERMITTED.value
+        )
+        return
     await message.answer(
         EmployeeUpdateMessages.UPDATE.value
     )
@@ -76,6 +87,11 @@ async def stop_filling(message: types.Message, state: FSMContext):
 # UpdateEmployee from search keyboard handler
 @dp.callback_query_handler(employee_cb.filter(action=EmployeeCardActionsButtons.EDIT_DATA.value))
 async def process_update_employee_callback(call: CallbackQuery, callback_data, state: FSMContext) -> None:
+    if not await UsersService.is_user_admin(call.from_user.id):
+        await call.answer(
+            UserRolesMessages.NOT_PERMITTED.value
+        )
+        return
     await bot.send_message(
         call.from_user.id,
         EmployeeUpdateMessages.UPDATE.value
@@ -171,8 +187,10 @@ async def process_avatar(message: types.Message, state: FSMContext):
         full_file_path = Path(TEMP_STATIC_PATH) / filename
         await bot.download_file_by_id(file_id, full_file_path)
         await state.update_data(avatar_path=full_file_path)
+    elif message.text == DONT_UPDATE_FIELD or message.text == OPTIONAL_FIELD:
+        await state.update_data(avatar_path=message.text)
     else:
-        await state.update_data(avatar_path=OPTIONAL_FIELD)
+        await state.update_data(avatar_path=DONT_UPDATE_FIELD)
     await message.answer(
         EmployeeUpdateMessages.SUCCESS.value,
         reply_markup=get_main_keyboard()

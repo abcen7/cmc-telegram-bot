@@ -16,6 +16,8 @@ from keyboards.constants import \
     EmployeeSearchButtons, \
     EmployeeCardActionsButtons, \
     EmployeeMainButtons
+from services import EmployeesService
+from services.users import UsersService
 
 executor_cb = CallbackData("executor", "action")
 employee_cb = CallbackData("employee", "employee_id", "action")
@@ -27,9 +29,19 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
     )
 
 
-def get_commands_keyboard() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
+async def get_commands_keyboard(telegram_id: int) -> InlineKeyboardMarkup:
+    buttons = [
+        [
+            InlineKeyboardButton(
+                text=EmployeeMainButtons.SEARCH_TEXT.value,
+                callback_data=executor_cb.new(
+                    action=EmployeeMainButtons.SEARCH_DATA.value
+                ),
+            )
+        ]
+    ]
+    if await UsersService.is_user_admin(telegram_id):
+        buttons += [
             [
                 InlineKeyboardButton(
                     text=EmployeeMainButtons.ADD_TEXT.value,
@@ -54,16 +66,9 @@ def get_commands_keyboard() -> InlineKeyboardMarkup:
                     ),
                 )
             ],
-            [
-                InlineKeyboardButton(
-                    text=EmployeeMainButtons.SEARCH_TEXT.value,
-                    callback_data=executor_cb.new(
-                        action=EmployeeMainButtons.SEARCH_DATA.value
-                    ),
-                )
-            ],
-        ],
-    )
+        ]
+
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 def get_optional_and_dont_update_keyboard() -> InlineKeyboardMarkup:
@@ -152,6 +157,22 @@ def get_search_keyboard() -> InlineKeyboardMarkup:
                     ),
                 )
             ],
+            [
+                InlineKeyboardButton(
+                    text=EmployeeSearchButtons.PATRONYMIC_TEXT.value,
+                    callback_data=executor_cb.new(
+                        action=EmployeeSearchButtons.PATRONYMIC_DATA.value
+                    ),
+                )
+            ],
+            [
+                InlineKeyboardButton(
+                    text=EmployeeSearchButtons.PERIOD_OF_TIME_TEXT.value,
+                    callback_data=executor_cb.new(
+                        action=EmployeeSearchButtons.PERIOD_OF_TIME_DATA.value
+                    ),
+                )
+            ]
         ],
     )
 
@@ -161,10 +182,24 @@ async def get_employees_list_keyboard(employees: List[Dict[str, str]]) -> Inline
     for employee in employees:
         buttons.append(
             [
-                # TODO Refactor
                 InlineKeyboardButton(
                     f"...{employee['_id'][-5:]} {employee['name']} {employee['surname']} {employee['project']}",
-                    callback_data=f"employee_info_{employee['_id']}"  # TODO Change
+                    callback_data=f"employee_info_{employee['_id']}"
+                )
+            ]
+        )
+    return InlineKeyboardMarkup(row_width=1, inline_keyboard=buttons)
+
+
+async def get_job_titles_list_keyboard() -> InlineKeyboardMarkup:
+    job_titles = await EmployeesService.get_all_job_titles()
+    buttons = []
+    for job_title in job_titles:
+        buttons.append(
+            [
+                InlineKeyboardButton(
+                    job_title,
+                    callback_data=f"employees_job_title_info_{job_title}"
                 )
             ]
         )

@@ -14,6 +14,14 @@ class EmployeesRepository:
     def __init__(self) -> None:
         self.collection = Employees
 
+    async def get_all_job_titles(self) -> List[str]:
+        job_titles = []
+        documents = [document async for document in self.collection.find({}, {"job_title": 1, "_id": 0})]
+        for document in documents:
+            job_titles.append(*list(document.values()))
+        job_titles = set(job_titles)
+        return list(job_titles)
+
     async def find_many_within_search(
             self,
             params_for_search: List[Dict[str, Dict[str, str]]],
@@ -23,6 +31,23 @@ class EmployeesRepository:
         return [
             document async for document in
             self.collection.find({"$and": params_for_search})
+            .skip(offset)
+            .limit(limit)
+        ]
+
+    async def find_many_within_search_time(
+            self,
+            start_time: int,
+            end_time: int,
+            offset: int,
+            limit: int
+    ) -> List[object_model]:
+        return [
+            document async for document in
+            self.collection.find({"created": {
+                '$gte': start_time,
+                '$lt': end_time
+            }})
             .skip(offset)
             .limit(limit)
         ]

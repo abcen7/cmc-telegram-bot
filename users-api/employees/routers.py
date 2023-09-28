@@ -23,6 +23,31 @@ async def get_employees_within_search(
     return await employees_service.find_many_within_search(params_for_search, offset, limit)
 
 
+@employees_router.post(
+    "/search/employees/time",
+    status_code=status.HTTP_200_OK,
+)
+async def get_employees_within_search_time(
+        offset: int,
+        limit: int,
+        params_for_search: SearchEmployee,
+        employees_service: EmployeesService = Depends(),
+) -> List[Employee]:
+    return await employees_service.find_many_within_search_time(params_for_search, offset, limit)
+
+
+
+@employees_router.get(
+    "/employees/job_titles",
+    status_code=status.HTTP_200_OK,
+)
+async def get_all_employees(
+        employees_service: EmployeesService = Depends(),
+) -> List[str]:
+    return await employees_service.get_all_job_titles()
+
+
+
 @employees_router.get(
     "/employees",
     status_code=status.HTTP_200_OK,
