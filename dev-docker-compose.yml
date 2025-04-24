@@ -1,8 +1,8 @@
 version: '3.8'
 
 x-environment: &default-environment
-  MINIO_ACCESS_KEY: v6COFScXBCIfZFsqYNH0
-  MINIO_SECRET_KEY: 9LMHiwoKXo5ekF7ovYBExDx4fifBj1ydzJam64on
+  MINIO_ACCESS_KEY: ZapM1WawVJ5UzCPHy3Hg
+  MINIO_SECRET_KEY: 4ocECEOrAkbHlpQLf8wxYOgV9zjPvDPYlhIlW0Jy
   MINIO_ROOT_USER: minioadmin
   MINIO_ROOT_PASSWORD: minioadmin
 

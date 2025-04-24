@@ -46,4 +46,4 @@ class UsersService:
     @staticmethod
     async def is_user_admin(telegram_id: int) -> bool:
         user = await UsersService.get_by_telegram_id(telegram_id)
-        return user['is_admin']
+        return user.get('is_admin')

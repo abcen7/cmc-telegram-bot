@@ -1,8 +1,12 @@
+import io
+
+import aiohttp
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
-from aiogram.types import CallbackQuery, ParseMode
+from aiogram.types import CallbackQuery, ParseMode, InputFile
 
+import config
 from main import \
     bot, \
     dp
@@ -181,13 +185,32 @@ async def process_view_employee_card(callback_data: CallbackQuery) -> None:
     keyboard = None
     if await UsersService.is_user_admin(callback_data.from_user.id):
         keyboard = get_employee_card_actions_keyboard(employee_id)
+    avatar_file_id = employee_from_api.get('avatar_path')
+    if avatar_file_id:
+        avatar_file_url = await EmployeesService.get_file(avatar_file_id)
+        if config.LOCAL_DEVELOPMENT:
+            avatar_file_url = avatar_file_url.replace('host.docker.internal', 'localhost')
+        async with aiohttp.ClientSession() as session:
+            async with session.get(avatar_file_url) as resp:
+                if resp.status != 200:
+                    return
+                file_bytes_data = await resp.read()
+                bio = io.BytesIO(file_bytes_data)
+                bio.name = "avatar.jpg"
+                photo = InputFile(bio)
+                await bot.send_photo(
+                    chat_id=callback_data.from_user.id,
+                    photo=photo,
+                    caption='',
+                    parse_mode=ParseMode.HTML
+                )
     await bot.send_message(
         chat_id=callback_data.from_user.id,
         text=await get_employee_card(employee_from_api),
         parse_mode=ParseMode.HTML,
-        disable_web_page_preview=False,
         reply_markup=keyboard
     )
+
 
 
 """Поиск по отчеству"""
