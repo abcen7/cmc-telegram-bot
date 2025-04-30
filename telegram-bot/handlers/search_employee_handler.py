@@ -131,6 +131,7 @@ async def process_search_employee_job_title_callback(call: CallbackQuery) -> Non
         EmployeeSearchMessages.LIST_JOB_TITLES.value,
         reply_markup=await get_job_titles_list_keyboard()
     )
+    await SearchEmployee.search_job_title_data.set()
 
 
 @dp.message_handler(commands=["search_employee_job_title"])
