@@ -1,8 +1,12 @@
+import io
+
+import aiohttp
 from aiogram import types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import StatesGroup, State
-from aiogram.types import CallbackQuery, ParseMode
+from aiogram.types import CallbackQuery, ParseMode, InputFile
 
+import config
 from main import \
     bot, \
     dp
@@ -57,6 +61,9 @@ async def process_search_employee_command(message: types.Message):
     )
 
 
+"""Поиск по имени сотрудника"""
+
+
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.NAME_DATA.value))
 async def process_search_employee_name_callback(call: CallbackQuery) -> None:
     await bot.send_message(
@@ -69,9 +76,6 @@ async def process_search_employee_name_callback(call: CallbackQuery) -> None:
 
 @dp.message_handler(commands=["search_employee_name"])
 async def search_employee_by_name(message: types.Message) -> None:
-    """
-    Поиск по имени сотрудника
-    """
     await message.answer(
         EmployeeSearchMessages.ASK.value,
         reply_markup=get_main_keyboard()
@@ -87,11 +91,11 @@ async def process_search_employee_by_name(message: types.Message, state: FSMCont
     await state.finish()
 
 
+"""Поиск по фамилии сотрудника"""
+
+
 @dp.message_handler(commands=["search_employee_surname"])
 async def search_employee_by_surname(message: types.Message) -> None:
-    """
-    Поиск по фамилии сотрудника
-    """
     await message.answer(
         EmployeeSearchMessages.ASK.value,
         reply_markup=get_main_keyboard()
@@ -117,6 +121,9 @@ async def process_search_employee_by_surname(message: types.Message, state: FSMC
     await state.finish()
 
 
+"""Поиск по должности сотрудника"""
+
+
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.JOB_TITLE_DATA.value))
 async def process_search_employee_job_title_callback(call: CallbackQuery) -> None:
     await bot.send_message(
@@ -128,7 +135,6 @@ async def process_search_employee_job_title_callback(call: CallbackQuery) -> Non
 
 @dp.message_handler(commands=["search_employee_job_title"])
 async def search_employee_by_job_title(message: types.Message) -> None:
-    """Поиск по должности сотрудника по команде"""
     await message.answer(
         EmployeeSearchMessages.LIST_JOB_TITLES.value,
         reply_markup=await get_job_titles_list_keyboard()
@@ -137,17 +143,16 @@ async def search_employee_by_job_title(message: types.Message) -> None:
 
 @dp.callback_query_handler(lambda c: c.data.startswith('employees_job_title_info_'))
 async def process_search_employee_job_title_callback(call: CallbackQuery) -> None:
-    """Получение списка пользователей по их должности"""
     employee_job_title = call.data.replace('employees_job_title_info_', '')
     api_result = await EmployeesService.search(employee_job_title, SearchType.JOB_TITLE)
     await get_result_or_failed(api_result, call.message)
 
 
+"""Поиск по проекту сотрудника"""
+
+
 @dp.message_handler(commands=["search_employee_project"])
 async def search_employee_by_project(message: types.Message) -> None:
-    """
-    Поиск по проекту сотрудника
-    """
     await message.answer(
         EmployeeSearchMessages.ASK.value,
         reply_markup=get_main_keyboard()
@@ -156,7 +161,7 @@ async def search_employee_by_project(message: types.Message) -> None:
 
 
 @dp.callback_query_handler(executor_cb.filter(action=EmployeeSearchButtons.PROJECT_DATA.value))
-async def process_search_employee_surname_callback(call: CallbackQuery) -> None:
+async def process_search_employee_project_callback(call: CallbackQuery) -> None:
     await bot.send_message(
         call.from_user.id,
         EmployeeSearchMessages.ASK.value,
@@ -180,13 +185,32 @@ async def process_view_employee_card(callback_data: CallbackQuery) -> None:
     keyboard = None
     if await UsersService.is_user_admin(callback_data.from_user.id):
         keyboard = get_employee_card_actions_keyboard(employee_id)
+    avatar_file_id = employee_from_api.get('avatar_path')
+    if avatar_file_id:
+        avatar_file_url = await EmployeesService.get_file(avatar_file_id)
+        if config.LOCAL_DEVELOPMENT:
+            avatar_file_url = avatar_file_url.replace('host.docker.internal', 'localhost')
+        async with aiohttp.ClientSession() as session:
+            async with session.get(avatar_file_url) as resp:
+                if resp.status != 200:
+                    return
+                file_bytes_data = await resp.read()
+                bio = io.BytesIO(file_bytes_data)
+                bio.name = "avatar.jpg"
+                photo = InputFile(bio)
+                await bot.send_photo(
+                    chat_id=callback_data.from_user.id,
+                    photo=photo,
+                    caption='',
+                    parse_mode=ParseMode.HTML
+                )
     await bot.send_message(
         chat_id=callback_data.from_user.id,
         text=await get_employee_card(employee_from_api),
         parse_mode=ParseMode.HTML,
-        disable_web_page_preview=False,
         reply_markup=keyboard
     )
+
 
 
 """Поиск по отчеству"""

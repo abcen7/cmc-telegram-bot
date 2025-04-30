@@ -195,10 +195,11 @@ async def get_job_titles_list_keyboard() -> InlineKeyboardMarkup:
     job_titles = await EmployeesService.get_all_job_titles()
     buttons = []
     for job_title in job_titles:
+        print(job_title, f"employees_job_title_info_{job_title}")
         buttons.append(
             [
                 InlineKeyboardButton(
-                    job_title,
+                    text=job_title,
                     callback_data=f"employees_job_title_info_{job_title}"
                 )
             ]

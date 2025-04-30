@@ -1,4 +1,3 @@
-import uuid
 from pathlib import Path
 
 from aiogram import types
@@ -7,13 +6,17 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import CallbackQuery
 
 from config import TEMP_STATIC_PATH
-from handlers.utils import generate_unique_filename
+from .utils import generate_unique_filename
 from main import bot, dp
-from services import EmployeesService
+from services import \
+    EmployeesService, \
+    UsersService
 
 from handlers.constants import \
     EmployeeCreateMessages, \
-    EmployeeAskDataMessages, UserRolesMessages
+    EmployeeAskDataMessages, \
+    UserRolesMessages
+
 from keyboards.executor import \
     executor_cb, \
     get_optional_field_keyboard, \
@@ -24,7 +27,6 @@ from keyboards.constants import \
     STOP_FILLING_FIELD, \
     OPTIONAL_FIELD, \
     EmployeeMainButtons
-from services.users import UsersService
 
 
 class FillEmployee(StatesGroup):

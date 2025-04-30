@@ -30,7 +30,7 @@ async def get_employee_card(employee: Dict[str, str]) -> str:
                     avatar_file = await EmployeesService.get_file(employee[key])
                     if config.LOCAL_DEVELOPMENT:
                         avatar_file = avatar_file.replace('host.docker.internal', 'localhost')
-                    employee_card.append(f'<a href="{avatar_file}">&#8205;</a>')
+                    employee_card.append(f'<a href="{avatar_file}">&#8203;</a>')
             case _:
                 if key in API_TO_RESULT and value:
                     employee_card.append(str(API_TO_RESULT[key]) + str(employee[key]))

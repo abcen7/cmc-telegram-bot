@@ -7,26 +7,33 @@ from aiogram.types import CallbackQuery
 
 from config import TEMP_STATIC_PATH
 from handlers import generate_unique_filename
-from main import bot, dp
-from services import EmployeesService
+
+from main import \
+    bot, \
+    dp
+
+from services import \
+    EmployeesService, \
+    UsersService
 
 from handlers.constants import \
     EmployeeAskDataMessages, \
-    EmployeeUpdateMessages, UserRoles, UserRolesMessages
+    EmployeeUpdateMessages, \
+    UserRolesMessages
 
 from keyboards.executor import \
     executor_cb, \
     get_stop_filling_keyboard, \
     get_main_keyboard, \
     get_dont_update_field_keyboard, \
-    get_optional_and_dont_update_keyboard, employee_cb
+    get_optional_and_dont_update_keyboard, \
+    employee_cb
 
 from keyboards.constants import \
     STOP_FILLING_FIELD, \
     OPTIONAL_FIELD, \
     EmployeeCardActionsButtons, \
     EmployeeMainButtons, DONT_UPDATE_FIELD
-from services.users import UsersService
 
 
 class UpdateEmployee(StatesGroup):
